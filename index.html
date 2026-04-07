@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flashcard Study App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app">
+    <div class="header">
+      <h1>🃏 Flashcard Study App</h1>
+      <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
+    </div>
+
+    <!-- Home Screen -->
+    <div id="home-screen">
+      <div class="stats-bar">
+        <div class="stat-box">📚 <span id="total-decks">0</span> Decks</div>
+        <div class="stat-box">🃏 <span id="total-cards">0</span> Cards</div>
+        <div class="stat-box">✅ <span id="total-learned">0</span> Learned</div>
+      </div>
+      <button class="primary-btn" onclick="showCreate()">➕ Create New Deck</button>
+      <div id="deck-list"></div>
+    </div>
+
+    <!-- Create Deck Screen -->
+    <div id="create-screen" class="hidden">
+      <h2>Create a Deck</h2>
+      <input type="text" id="deck-name" placeholder="Deck name (e.g. Biology)" />
+      <select id="deck-category">
+        <option value="">Select Category</option>
+        <option value="📚 Science">📚 Science</option>
+        <option value="📖 History">📖 History</option>
+        <option value="🔢 Math">🔢 Math</option>
+        <option value="🌍 Geography">🌍 Geography</option>
+        <option value="💻 Programming">💻 Programming</option>
+        <option value="🗣️ Language">🗣️ Language</option>
+        <option value="🎯 Other">🎯 Other</option>
+      </select>
+      <h3>Add Cards</h3>
+      <input type="text" id="card-front" placeholder="Question (front)" />
+      <input type="text" id="card-back" placeholder="Answer (back)" />
+      <input type="text" id="card-hint" placeholder="Hint (optional)" />
+      <button onclick="addCard()">➕ Add Card</button>
+      <div id="card-preview"></div>
+      <div class="btn-row">
+        <button class="primary-btn" onclick="saveDeck()">💾 Save Deck</button>
+        <button class="secondary-btn" onclick="showHome()">← Back</button>
+      </div>
+    </div>
+
+    <!-- Study Screen -->
+    <div id="study-screen" class="hidden">
+      <div class="study-header">
+        <h2 id="study-deck-name"></h2>
+        <div class="study-options">
+          <label><input type="checkbox" id="random-order" checked /> Random</label>
+          <label><input type="checkbox" id="show-timer" /> Timer</label>
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div id="progress-fill"></div>
+      </div>
+      <p id="progress-text"></p>
+      <div id="timer-display" class="hidden">⏱️ <span id="timer-count">0</span>s</div>
+
+      <div class="card-container" onclick="flipCard()">
+        <div class="card" id="flashcard">
+          <div class="card-front" id="card-front-text"></div>
+          <div class="card-back" id="card-back-text"></div>
+        </div>
+      </div>
+      <p id="hint-text" class="hint-text"></p>
+      <p class="hint">👆 Click card to flip • Space to flip • ← → to answer</p>
+
+      <div id="answer-buttons" class="hidden">
+        <button class="know" onclick="answer(true)">✅ Know it</button>
+        <button class="dontknow" onclick="answer(false)">❌ Don't know</button>
+      </div>
+      <button class="secondary-btn" onclick="showHome()">← Back to Home</button>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="hidden">
+      <h2>🎉 Session Complete!</h2>
+      <div class="result-card">
+        <p id="result-text"></p>
+        <div class="result-breakdown" id="result-breakdown"></div>
+      </div>
+      <div class="btn-row">
+        <button class="primary-btn" onclick="restartDeck()">🔄 Try Again</button>
+        <button class="secondary-btn" onclick="showHome()">🏠 Home</button>
+      </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>How to Use</h2>
+        <p>1. Click <b>Create New Deck</b> to make a deck</p>
+        <p>2. Add cards with a question, answer and optional hint</p>
+        <p>3. Click <b>Study</b> on any deck to start</p>
+        <p>4. Click the card to flip it, then mark if you knew it</p>
+        <p>5. Keyboard: <b>Space</b> to flip, <b>←</b> Don't know, <b>→</b> Know it</p>
+        <button onclick="closeHelp()">Got it! ✅</button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="help-btn" onclick="showHelp()">❓ Help</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
