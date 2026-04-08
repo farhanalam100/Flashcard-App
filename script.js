@@ -25,6 +25,11 @@ let selectedColor = '#e94560';
 let currentIODeckIndex = -1;
 let dueCardDeckIndex = -1;
 
+// Bulk selection / tagging (Library)
+let manageMode = false;
+let selectedDeckIndices = new Set();
+let lastRenderedDeckIndices = [];
+
 /* ── PERSIST ── */
 function saveAll() {
   localStorage.setItem('decks', JSON.stringify(decks));
@@ -43,6 +48,13 @@ function navTo(screen) {
     n.classList.toggle('active', n.dataset.screen === screen);
   });
   clearTimer();
+
+  // Leaving the library should exit selection mode.
+  if (screen !== 'home') {
+    manageMode = false;
+    selectedDeckIndices.clear();
+    updateBulkUI();
+  }
 
   if (screen === 'home') {
     document.getElementById('home-screen').classList.add('active');
@@ -66,6 +78,8 @@ function updateStats() {
   document.getElementById('total-cards').textContent = decks.reduce((a, d) => a + d.cards.length, 0);
   document.getElementById('total-learned').textContent = stats.learned;
   document.getElementById('streak-count').textContent = getStreak();
+  refreshTagFilterOptions();
+  updateBulkUI();
 }
 
 function getStreak() {
@@ -155,6 +169,7 @@ function resetCreateForm() {
   document.getElementById('create-title').textContent = 'Create Deck';
   document.getElementById('deck-name').value = '';
   document.getElementById('deck-category').value = '';
+  document.getElementById('deck-tags').value = '';
   document.getElementById('card-front').value = '';
   document.getElementById('card-back').value = '';
   document.getElementById('card-hint').value = '';
@@ -238,10 +253,15 @@ function renderPreview() {
 function saveDeck() {
   const name = document.getElementById('deck-name').value.trim();
   const category = document.getElementById('deck-category').value;
+  const tagsRaw = (document.getElementById('deck-tags')?.value || '').trim();
   if (!name) return showToast('Please enter a deck name!', 'error');
   if (!tempCards.length) return showToast('Add at least one card!', 'error');
 
-  const deckObj = { name, category, color: selectedColor, cards: tempCards, created: Date.now() };
+  const tags = tagsRaw
+    ? Array.from(new Set(tagsRaw.split(',').map(t => t.trim()).filter(Boolean))).slice(0, 12)
+    : [];
+
+  const deckObj = { name, category, tags, color: selectedColor, cards: tempCards, created: Date.now() };
 
   if (editingDeckIndex >= 0) {
     deckObj.lastScore = decks[editingDeckIndex].lastScore;
@@ -267,6 +287,7 @@ function openEditDeck(i) {
   document.getElementById('create-title').textContent = 'Edit Deck';
   document.getElementById('deck-name').value = deck.name;
   document.getElementById('deck-category').value = deck.category || '';
+  document.getElementById('deck-tags').value = Array.isArray(deck.tags) ? deck.tags.join(', ') : '';
   document.querySelectorAll('.color-dot').forEach(d => {
     d.classList.toggle('selected', d.dataset.color === selectedColor);
   });
@@ -345,13 +366,15 @@ Keep answers concise (under 15 words). Questions should be specific and testable
 /* ══════════════════════════════════════
    DECK LIST
 ══════════════════════════════════════ */
-function renderDecks(filterText = '', filterCat = '') {
+function renderDecks(filterText = '', filterCat = '', filterTag = '') {
   const list = document.getElementById('deck-list');
   let filtered = decks.filter((d, i) => {
     const matchText = !filterText || d.name.toLowerCase().includes(filterText.toLowerCase());
     const matchCat = !filterCat || d.category === filterCat;
-    return matchText && matchCat;
+    const matchTag = !filterTag || (Array.isArray(d.tags) && d.tags.map(t => t.toLowerCase()).includes(filterTag.toLowerCase()));
+    return matchText && matchCat && matchTag;
   });
+  lastRenderedDeckIndices = filtered.map(deck => decks.indexOf(deck));
 
   if (!filtered.length) {
     list.innerHTML = `<div class="empty-state">
@@ -365,11 +388,22 @@ function renderDecks(filterText = '', filterCat = '') {
   list.innerHTML = `<div class="deck-grid">${filtered.map((deck) => {
     const realIdx = decks.indexOf(deck);
     const dueCount = deck.cards.filter(c => isDueToday(c)).length;
+    const isSelected = selectedDeckIndices.has(realIdx);
     return `
-      <div class="deck-card" style="--deck-color:${deck.color || '#e94560'}">
+      <div class="deck-card ${isSelected ? 'selected' : ''}" style="--deck-color:${deck.color || '#e94560'}" onclick="handleDeckCardClick(${realIdx}, event)">
+        ${manageMode ? `
+          <button class="deck-select" onclick="toggleDeckSelect(${realIdx}, event)" aria-label="Select deck">
+            <span class="deck-select-box">${isSelected ? '✓' : ''}</span>
+          </button>
+        ` : ''}
         <div class="deck-icon" style="background:${deck.color || '#e94560'};opacity:0.18;"></div>
         <div class="deck-info">
           <div class="deck-name">${escHtml(deck.category ? deck.category + ' ' : '')}${escHtml(deck.name)}</div>
+          ${Array.isArray(deck.tags) && deck.tags.length ? `
+            <div class="tag-row">
+              ${deck.tags.slice(0, 4).map(t => `<span class="tag-chip">${escHtml(t)}</span>`).join('')}
+              ${deck.tags.length > 4 ? `<span class="tag-more">+${deck.tags.length - 4}</span>` : ''}
+            </div>` : ''}
           <div class="deck-meta">
             <span>${deck.cards.length} cards</span>
             ${deck.lastScore !== undefined ? `<span class="deck-score">${deck.lastScore}%</span>` : ''}
@@ -384,12 +418,139 @@ function renderDecks(filterText = '', filterCat = '') {
         </div>
       </div>`;
   }).join('')}</div>`;
+
+  // Hide action buttons while selecting to avoid accidental clicks
+  updateBulkUI();
 }
 
 function filterDecks() {
   const text = document.getElementById('search-input').value;
   const cat = document.getElementById('filter-category').value;
-  renderDecks(text, cat);
+  const tag = document.getElementById('filter-tag')?.value || '';
+  renderDecks(text, cat, tag);
+  refreshTagFilterOptions();
+}
+
+function toggleManageMode() {
+  manageMode = !manageMode;
+  if (!manageMode) selectedDeckIndices.clear();
+  updateBulkUI();
+  filterDecks();
+}
+
+function updateBulkUI() {
+  const bulkBar = document.getElementById('bulk-bar');
+  const manageBtn = document.getElementById('manage-btn');
+  const count = document.getElementById('bulk-count');
+  if (!bulkBar || !manageBtn || !count) return;
+
+  bulkBar.classList.toggle('hidden', !manageMode);
+  manageBtn.textContent = manageMode ? 'Done' : 'Select';
+  const n = selectedDeckIndices.size;
+  count.textContent = `${n} selected`;
+  document.body.classList.toggle('manage-mode', manageMode);
+}
+
+function handleDeckCardClick(deckIdx, event) {
+  if (!manageMode) return;
+  event.preventDefault();
+  toggleDeckSelect(deckIdx, event);
+}
+
+function toggleDeckSelect(deckIdx, event) {
+  if (event) event.stopPropagation();
+  if (!manageMode) return;
+  if (selectedDeckIndices.has(deckIdx)) selectedDeckIndices.delete(deckIdx);
+  else selectedDeckIndices.add(deckIdx);
+  updateBulkUI();
+  filterDecks();
+}
+
+function clearSelection() {
+  selectedDeckIndices.clear();
+  updateBulkUI();
+  filterDecks();
+}
+
+function selectAllVisible() {
+  if (!manageMode) return;
+  lastRenderedDeckIndices.forEach(i => selectedDeckIndices.add(i));
+  updateBulkUI();
+  filterDecks();
+}
+
+function applyTagToSelected() {
+  if (!manageMode) return;
+  const input = document.getElementById('bulk-tag-input');
+  const raw = (input?.value || '').trim();
+  if (!raw) return showToast('Enter a tag first', 'error');
+
+  const tag = raw.replace(/\s+/g, ' ').slice(0, 24);
+  let changed = 0;
+  selectedDeckIndices.forEach(i => {
+    const d = decks[i];
+    if (!d) return;
+    if (!Array.isArray(d.tags)) d.tags = [];
+    const has = d.tags.some(t => t.toLowerCase() === tag.toLowerCase());
+    if (!has) {
+      d.tags.push(tag);
+      changed++;
+    }
+  });
+  if (changed) {
+    saveAll();
+    refreshTagFilterOptions();
+    showToast(`Added tag "${tag}" to ${changed} deck${changed !== 1 ? 's' : ''} ✓`);
+  } else {
+    showToast('No changes (tag already present)', 'error');
+  }
+  if (input) input.value = '';
+  filterDecks();
+}
+
+function removeTagFromSelected() {
+  if (!manageMode) return;
+  const input = document.getElementById('bulk-tag-input');
+  const raw = (input?.value || '').trim();
+  if (!raw) return showToast('Enter a tag to remove', 'error');
+
+  const tag = raw.replace(/\s+/g, ' ').slice(0, 24);
+  let changed = 0;
+  selectedDeckIndices.forEach(i => {
+    const d = decks[i];
+    if (!d || !Array.isArray(d.tags)) return;
+    const before = d.tags.length;
+    d.tags = d.tags.filter(t => t.toLowerCase() !== tag.toLowerCase());
+    if (d.tags.length !== before) changed++;
+  });
+  if (changed) {
+    saveAll();
+    refreshTagFilterOptions();
+    showToast(`Removed tag "${tag}" from ${changed} deck${changed !== 1 ? 's' : ''} ✓`);
+  } else {
+    showToast('No changes (tag not found)', 'error');
+  }
+  if (input) input.value = '';
+  filterDecks();
+}
+
+function refreshTagFilterOptions() {
+  const select = document.getElementById('filter-tag');
+  if (!select) return;
+
+  const current = select.value;
+  const tags = Array.from(new Set(
+    decks.flatMap(d => Array.isArray(d.tags) ? d.tags : [])
+      .map(t => (t || '').trim())
+      .filter(Boolean)
+  )).sort((a, b) => a.localeCompare(b));
+
+  const options = ['<option value="">All tags</option>']
+    .concat(tags.map(t => `<option value="${escHtml(t)}">${escHtml(t)}</option>`));
+
+  select.innerHTML = options.join('');
+  // Preserve selection if possible
+  if (tags.includes(current)) select.value = current;
 }
 
 function deleteDeck(i) {

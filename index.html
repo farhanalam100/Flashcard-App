@@ -81,13 +81,16 @@
             <h1>Your Library</h1>
             <p class="sub">Review, study, and master your decks</p>
           </div>
-          <button class="btn-primary" onclick="navTo('create')">
-            <svg viewBox="0 0 24 24">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            New Deck
-          </button>
+          <div class="btn-row">
+            <button class="btn-ghost" id="manage-btn" onclick="toggleManageMode()">Select</button>
+            <button class="btn-primary" onclick="navTo('create')">
+              <svg viewBox="0 0 24 24">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              New Deck
+            </button>
+          </div>
         </div>
 
         <div class="stats-row">
@@ -137,6 +140,23 @@
             <option value="🗣️ Language">🗣️ Language</option>
             <option value="🎯 Other">🎯 Other</option>
           </select>
+          <select id="filter-tag" onchange="filterDecks()">
+            <option value="">All tags</option>
+          </select>
+        </div>
+
+        <!-- Bulk actions (appears in Select mode) -->
+        <div id="bulk-bar" class="bulk-bar hidden">
+          <div class="bulk-left">
+            <span class="bulk-count" id="bulk-count">0 selected</span>
+            <button class="btn-ghost" onclick="selectAllVisible()">Select all</button>
+            <button class="btn-ghost" onclick="clearSelection()">Clear</button>
+          </div>
+          <div class="bulk-right">
+            <input type="text" id="bulk-tag-input" placeholder="Tag (e.g. exam)" />
+            <button class="btn-primary" onclick="applyTagToSelected()">Add tag</button>
+            <button class="btn-ghost" onclick="removeTagFromSelected()">Remove tag</button>
+          </div>
         </div>
 
         <div id="deck-list"></div>
@@ -168,6 +188,9 @@
               <option value="🗣️ Language">🗣️ Language</option>
               <option value="🎯 Other">🎯 Other</option>
             </select>
+
+            <label class="form-label">Tags</label>
+            <input type="text" id="deck-tags" placeholder="e.g. exam, chapter 4, vocab" />
 
             <label class="form-label">Deck Color</label>
             <div class="color-picker" id="color-picker">
