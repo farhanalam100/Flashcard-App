@@ -71,10 +71,11 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 16px 40px;
-  backdrop-filter: blur(16px);
-  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7), transparent);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  padding: 14px 32px;
+  backdrop-filter: blur(18px);
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.85), transparent);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.65);
 }
 
 .topbar-left {
@@ -151,7 +152,7 @@ body {
 .topbar-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .icon-button {
@@ -174,6 +175,33 @@ body {
   border-color: transparent;
   color: #f9fafb;
   transform: translateY(-1px);
+}
+
+.theme-toggle {
+  width: auto;
+  height: auto;
+  padding: 6px 12px;
+  gap: 6px;
+  border-radius: 999px;
+  border-color: rgba(37, 99, 235, 0.6);
+  background: radial-gradient(circle at 0 0, rgba(37, 99, 235, 0.6), transparent 60%), rgba(15, 23, 42, 0.9);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.theme-toggle-icon {
+  font-size: 14px;
+}
+
+.theme-toggle-label {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 10px;
+}
+
+.theme-toggle:hover {
+  background: linear-gradient(135deg, #0f172a, #1d4ed8);
+  border-color: rgba(191, 219, 254, 0.9);
 }
 
 /* ── MAIN CONTENT ── */
