@@ -53,15 +53,47 @@ FlashCards is a sleek, single‑page flashcard app designed for focused studying
   - Import a deck JSON file
   - Copy a share link
   - Show a QR code
+  - Backup and restore all app data (decks, stats, history, theme)
 
 - **Theme**
   - Dark / Light theme toggle
+
+- **PWA app mode**
+  - Installable as an app (supported browsers)
+  - Offline support with service worker cache
 
 ## Tech notes
 
 - **Frontend only**: HTML + CSS + JavaScript
 - **Storage**: LocalStorage (no database)
 - **AI**: uses an external API call from the browser (requires network access)
+
+## Data & safety
+
+- **Backup all data**
+  - Go to **Analytics** and click `🗂 Backup All Data`
+  - This exports a JSON backup with decks, stats, activity log, card history, and theme
+
+- **Restore backup**
+  - Go to **Analytics** and click `⬆ Restore Backup`
+  - Choose a backup JSON file exported from this app
+
+- **Run diagnostics**
+  - Go to **Analytics** and click `🧪 Run Diagnostics`
+  - Checks for common data issues (broken deck structures, malformed history keys)
+
+- **Reset app data**
+  - Go to **Analytics** and click `🧹 Reset App Data`
+  - This removes all local data from the browser for this app
+  - Use backup first if you need to keep data
+
+- **Where data is stored**
+  - All app data is stored in browser LocalStorage
+  - Data does not sync to cloud by default
+
+- **PWA update notes**
+  - If you deploy a new version and still see old behavior, hard refresh once
+  - On desktop: `Ctrl + F5` (Windows) or `Cmd + Shift + R` (macOS)
 
 ## Project files
 

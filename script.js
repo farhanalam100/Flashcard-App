@@ -1065,6 +1065,92 @@ function exportStats() {
   showToast('Stats exported ✓');
 }
 
+function exportAllData() {
+  const payload = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    data: { decks, stats, activityLog, cardHistory, isLight }
+  };
+  downloadText(JSON.stringify(payload, null, 2), `flashcards-backup-${todayKey()}.json`, 'application/json');
+  showToast('Full backup exported ✓');
+}
+
+function importAllData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const payload = JSON.parse(e.target.result);
+      const data = payload?.data || payload;
+      if (!data || !Array.isArray(data.decks)) throw new Error('Invalid backup');
+
+      decks = data.decks.map(normalizeDeck).filter(d => d.name && d.cards.length);
+      stats = data.stats && typeof data.stats === 'object'
+        ? data.stats
+        : { learned: 0, sessions: 0, totalCorrect: 0, totalAnswered: 0 };
+      activityLog = data.activityLog && typeof data.activityLog === 'object' ? data.activityLog : {};
+      cardHistory = data.cardHistory && typeof data.cardHistory === 'object' ? data.cardHistory : {};
+      isLight = !!data.isLight;
+
+      document.body.classList.toggle('light', isLight);
+      localStorage.setItem('flashcards_theme', isLight ? 'light' : 'dark');
+      document.getElementById('theme-label').textContent = isLight ? 'Light Mode' : 'Dark Mode';
+      document.getElementById('theme-icon').innerHTML = isLight
+        ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+        : '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
+
+      saveAll();
+      navTo('home');
+      showToast('Backup restored ✓');
+    } catch {
+      showToast('Invalid backup file', 'error');
+    } finally {
+      event.target.value = '';
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetAppData() {
+  if (!confirm('Reset all app data? This deletes all decks, stats, and history on this browser.')) return;
+  localStorage.removeItem('decks');
+  localStorage.removeItem('stats');
+  localStorage.removeItem('activityLog');
+  localStorage.removeItem('cardHistory');
+  localStorage.removeItem('flashcards_theme');
+  localStorage.removeItem('flashcards_ai_key');
+
+  decks = [];
+  stats = { learned: 0, sessions: 0, totalCorrect: 0, totalAnswered: 0 };
+  activityLog = {};
+  cardHistory = {};
+  isLight = false;
+  manageMode = false;
+  selectedDeckIndices.clear();
+  lastRenderedDeckIndices = [];
+  tempCards = [];
+  editingDeckIndex = -1;
+  currentDeckIndex = -1;
+
+  document.body.classList.remove('light');
+  document.getElementById('theme-label').textContent = 'Dark Mode';
+  document.getElementById('theme-icon').innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
+
+  navTo('home');
+  showToast('All app data reset ✓');
+}
+
+function runDiagnostics() {
+  const deckCount = decks.length;
+  const cardCount = decks.reduce((n, d) => n + d.cards.length, 0);
+  const brokenDecks = decks.filter(d => !d.name || !Array.isArray(d.cards) || d.cards.some(c => !c.front || !c.back)).length;
+  const orphanHistory = Object.keys(cardHistory).filter(k => !k.includes('-')).length;
+  const summary = `Decks:${deckCount} Cards:${cardCount} BrokenDecks:${brokenDecks} BadHistoryKeys:${orphanHistory}`;
+  if (brokenDecks || orphanHistory) showToast(`Diagnostics issues found (${summary})`, 'error');
+  else showToast(`Diagnostics passed (${summary})`);
+}
+
 /* ══════════════════════════════════════
    IMPORT / EXPORT / SHARE
 ══════════════════════════════════════ */
