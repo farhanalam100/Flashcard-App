@@ -497,15 +497,19 @@ function parseCardsJSON(text) {
 ══════════════════════════════════════ */
 function renderDecks(filterText = '', filterCat = '', filterTag = '') {
   const list = document.getElementById('deck-list');
-  let filtered = decks.filter((d, i) => {
-    const matchText = !filterText || d.name.toLowerCase().includes(filterText.toLowerCase());
-    const matchCat = !filterCat || d.category === filterCat;
-    const matchTag = !filterTag || (Array.isArray(d.tags) && d.tags.map(t => t.toLowerCase()).includes(filterTag.toLowerCase()));
-    return matchText && matchCat && matchTag;
-  });
-  lastRenderedDeckIndices = filtered.map(deck => decks.indexOf(deck));
+  const q = filterText.trim().toLowerCase();
+  const tagQ = filterTag.trim().toLowerCase();
+  const filteredEntries = decks
+    .map((deck, idx) => ({ deck, idx }))
+    .filter(({ deck }) => {
+      const matchText = !q || deck.name.toLowerCase().includes(q);
+      const matchCat = !filterCat || deck.category === filterCat;
+      const matchTag = !tagQ || (Array.isArray(deck.tags) && deck.tags.some(t => t.toLowerCase() === tagQ));
+      return matchText && matchCat && matchTag;
+    });
+  lastRenderedDeckIndices = filteredEntries.map(({ idx }) => idx);
 
-  if (!filtered.length) {
+  if (!filteredEntries.length) {
     list.innerHTML = `<div class="empty-state">
       <div class="empty-icon">📭</div>
       <h3>${decks.length === 0 ? 'No decks yet' : 'No results'}</h3>
@@ -514,8 +518,7 @@ function renderDecks(filterText = '', filterCat = '', filterTag = '') {
     return;
   }
 
-  list.innerHTML = `<div class="deck-grid">${filtered.map((deck) => {
-    const realIdx = decks.indexOf(deck);
+  list.innerHTML = `<div class="deck-grid">${filteredEntries.map(({ deck, idx: realIdx }) => {
     const dueCount = deck.cards.filter(c => isDueToday(c)).length;
     const isSelected = selectedDeckIndices.has(realIdx);
     return `
@@ -557,7 +560,6 @@ function filterDecks() {
   const cat = document.getElementById('filter-category').value;
   const tag = document.getElementById('filter-tag')?.value || '';
   renderDecks(text, cat, tag);
-  refreshTagFilterOptions();
 }
 
 function toggleManageMode() {

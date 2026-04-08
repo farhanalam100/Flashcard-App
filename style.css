@@ -523,6 +523,14 @@ button {
   transition: all 0.15s;
 }
 
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgba(56, 189, 248, 0.9);
+  outline-offset: 2px;
+}
+
 .btn-primary {
   background: linear-gradient(145deg, #2563eb, #1d4ed8);
   color: white;
@@ -1335,10 +1343,51 @@ kbd {
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-  :root { --sidebar-w: 0px; }
-  .sidebar { display: none; }
-  .main-content { margin-left: 0; padding: 20px 16px; }
+  .topbar {
+    padding: 10px 0;
+  }
+  .topbar-inner {
+    padding: 0 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .topbar-left {
+    width: 100%;
+    justify-content: center;
+  }
+  .top-nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .top-nav::-webkit-scrollbar { display: none; }
+  .topbar-actions {
+    order: 2;
+  }
+  .main-content {
+    margin-left: 0;
+    padding: 20px 16px;
+  }
   .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .search-row {
+    flex-direction: column;
+  }
+  #filter-tag {
+    max-width: none;
+  }
+  .bulk-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .bulk-left, .bulk-right {
+    flex-wrap: wrap;
+  }
+  #bulk-tag-input {
+    width: 100%;
+  }
   .form-grid { grid-template-columns: 1fr; }
   .card-inputs { grid-template-columns: 1fr; }
   .quiz-choices { grid-template-columns: 1fr; }
@@ -1346,6 +1395,20 @@ kbd {
 }
 
 @media (max-width: 480px) {
+  .logo-image {
+    width: 42px;
+    height: 42px;
+  }
+  .logo-text {
+    font-size: 18px;
+  }
+  .logo-subtext {
+    font-size: 10px;
+  }
+  .top-nav-item {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
   .card { height: 180px; }
   .answer-row { flex-direction: column; align-items: stretch; }
   .answer-row button { max-width: 100%; }

@@ -5,6 +5,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FlashCards — Flashcard Study App</title>
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="FlashCards is a premium flashcard study app with AI generation, spaced repetition, and analytics." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="assets/flashcards-logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
     href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
@@ -128,9 +132,9 @@
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
-            <input type="text" id="search-input" placeholder="Search decks…" oninput="filterDecks()" />
+            <input type="text" id="search-input" placeholder="Search decks…" oninput="filterDecks()" aria-label="Search decks" />
           </div>
-          <select id="filter-category" onchange="filterDecks()">
+          <select id="filter-category" onchange="filterDecks()" aria-label="Filter by category">
             <option value="">All categories</option>
             <option value="📚 Science">📚 Science</option>
             <option value="📖 History">📖 History</option>
@@ -140,7 +144,7 @@
             <option value="🗣️ Language">🗣️ Language</option>
             <option value="🎯 Other">🎯 Other</option>
           </select>
-          <select id="filter-tag" onchange="filterDecks()">
+          <select id="filter-tag" onchange="filterDecks()" aria-label="Filter by tag">
             <option value="">All tags</option>
           </select>
         </div>
@@ -423,6 +427,15 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="script.js?v=2"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {
+          // Ignore SW registration failures silently for local/file edge cases
+        });
+      });
+    }
+  </script>
 </body>
 
 </html>
