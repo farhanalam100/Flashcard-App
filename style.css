@@ -434,16 +434,46 @@ body.light .theme-knob {
   gap: 10px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 0 14px;
+  border-radius: 999px;
+  padding: 0 16px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.55);
+  position: relative;
+  overflow: hidden;
 }
 
 .search-box svg {
-  width: 16px; height: 16px;
-  stroke: var(--text-3);
+  width: 18px;
+  height: 18px;
+  stroke: transparent;
   fill: none;
-  stroke-width: 2;
   flex-shrink: 0;
+}
+
+.search-box svg circle,
+.search-box svg line {
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.search-box::before {
+  content: '';
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 30% 0%, rgba(56, 189, 248, 0.7), transparent 60%),
+    radial-gradient(circle at 70% 100%, rgba(59, 130, 246, 0.55), transparent 70%);
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.search-box:hover {
+  border-color: rgba(148, 163, 184, 0.7);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.75);
 }
 
 .search-box input {
