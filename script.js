@@ -301,7 +301,7 @@ function openEditDeck(i) {
 ══════════════════════════════════════ */
 async function generateCards() {
   const topic = document.getElementById('ai-topic').value.trim();
-  const count = document.getElementById('ai-count').value;
+  const count = parseInt(document.getElementById('ai-count').value, 10);
   if (!topic) return showToast('Enter a topic first!', 'error');
 
   const btn = document.getElementById('ai-btn');
@@ -317,24 +317,37 @@ Each object: {"front": "question", "back": "answer", "hint": "short hint or empt
 Keep answers concise (under 15 words). Questions should be specific and testable.`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    // Optional real AI path: set localStorage.flashcards_ai_key to your Anthropic API key.
+    // If unavailable, we use a built-in smart generator so the feature still works offline.
+    const apiKey = localStorage.getItem('flashcards_ai_key');
+    let cards = [];
 
-    if (!response.ok) throw new Error('API error ' + response.status);
+    if (apiKey) {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-5-sonnet-20241022',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
 
-    const data = await response.json();
-    let text = data.content.map(b => b.text || '').join('');
-    text = text.replace(/```json|```/g, '').trim();
-    const cards = JSON.parse(text);
+      if (!response.ok) throw new Error('API error ' + response.status);
 
-    if (!Array.isArray(cards)) throw new Error('Invalid response format');
+      const data = await response.json();
+      let text = (data.content || []).map(b => b.text || '').join('');
+      text = text.replace(/```json|```/g, '').trim();
+      cards = JSON.parse(text);
+      if (!Array.isArray(cards)) throw new Error('Invalid response format');
+    } else {
+      cards = buildSmartCards(topic, count);
+      status.textContent = `✨ Created ${cards.length} cards with Smart Generator (no API key needed).`;
+    }
 
     cards.forEach(c => {
       if (c.front && c.back) {
@@ -355,12 +368,89 @@ Keep answers concise (under 15 words). Questions should be specific and testable
     showToast(`${cards.length} cards generated! ✨`);
   } catch (err) {
     console.error(err);
-    status.textContent = '❌ Generation failed. Check your connection and try again.';
-    showToast('AI generation failed', 'error');
+    // Final fallback if API fails for any reason.
+    const fallback = buildSmartCards(topic, count);
+    fallback.forEach(c => {
+      tempCards.push({
+        front: c.front.trim(),
+        back: c.back.trim(),
+        hint: (c.hint || '').trim(),
+        ease: 2.5, interval: 0, repetitions: 0, nextReview: null
+      });
+    });
+    renderPreview();
+    status.textContent = `⚠ API unavailable. Added ${fallback.length} cards using Smart Generator.`;
+    showToast('Using Smart Generator fallback');
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg> Generate';
   }
+}
+
+function buildSmartCards(topic, count) {
+  const cleanTopic = topic.trim();
+  const capTopic = cleanTopic.charAt(0).toUpperCase() + cleanTopic.slice(1);
+  const n = Math.max(1, Math.min(25, count || 10));
+
+  const templates = [
+    {
+      front: `What is ${capTopic}?`,
+      back: `${capTopic} is a key concept/topic to study.`,
+      hint: 'Define it in one sentence'
+    },
+    {
+      front: `Why is ${capTopic} important?`,
+      back: `It has major impact in its field and practical applications.`,
+      hint: 'Think impact and use-cases'
+    },
+    {
+      front: `Name one core idea in ${capTopic}.`,
+      back: `A core idea is understanding its main principles and structure.`,
+      hint: 'Focus on fundamentals'
+    },
+    {
+      front: `Give an example related to ${capTopic}.`,
+      back: `Use a real-world or textbook example to explain it.`,
+      hint: 'Pick a concrete scenario'
+    },
+    {
+      front: `What is a common mistake about ${capTopic}?`,
+      back: `Confusing related terms or skipping key assumptions.`,
+      hint: 'Think misconceptions'
+    },
+    {
+      front: `How would you explain ${capTopic} to a beginner?`,
+      back: `Use simple language, one analogy, and one short example.`,
+      hint: 'Keep it simple'
+    },
+    {
+      front: `Which term is strongly associated with ${capTopic}?`,
+      back: `A central keyword/term that appears often in this topic.`,
+      hint: 'Recall vocabulary'
+    },
+    {
+      front: `What are two subtopics of ${capTopic}?`,
+      back: `Break it into two smaller parts and study each separately.`,
+      hint: 'Split into components'
+    },
+    {
+      front: `How can you test understanding of ${capTopic}?`,
+      back: `Answer practice questions and explain concepts from memory.`,
+      hint: 'Active recall method'
+    },
+    {
+      front: `Summarize ${capTopic} in one line.`,
+      back: `${capTopic}: core principles + practical application + examples.`,
+      hint: 'One-line summary'
+    }
+  ];
+
+  const cards = [];
+  for (let i = 0; i < n; i++) {
+    const t = templates[i % templates.length];
+    cards.push({ front: t.front, back: t.back, hint: t.hint });
+  }
+  return cards;
 }
 
 /* ══════════════════════════════════════
