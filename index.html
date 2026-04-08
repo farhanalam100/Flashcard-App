@@ -384,13 +384,6 @@
 
         <div class="btn-row" style="margin-top:24px">
           <button class="btn-ghost" onclick="exportStats()">⬇ Export Stats CSV</button>
-          <button class="btn-ghost" onclick="exportAllData()">🗂 Backup All Data</button>
-          <label class="btn-ghost" style="cursor:pointer">
-            ⬆ Restore Backup
-            <input type="file" accept=".json" id="restore-all-file" onchange="importAllData(event)" style="display:none">
-          </label>
-          <button class="btn-ghost" onclick="runDiagnostics()">🧪 Run Diagnostics</button>
-          <button class="btn-delete" onclick="resetAppData()">🧹 Reset App Data</button>
         </div>
       </div>
 
@@ -437,7 +430,7 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="script.js?v=3"></script>
+  <script src="script.js?v=2"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
