@@ -67,15 +67,21 @@ body {
   position: sticky;
   top: 0;
   z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 14px 32px;
+  padding: 14px 0;
   backdrop-filter: blur(18px);
   background: linear-gradient(to bottom, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.85), transparent);
   border-bottom: 1px solid rgba(15, 23, 42, 0.9);
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.65);
+}
+
+.topbar-inner {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
 }
 
 .topbar-left {
@@ -153,8 +159,8 @@ body {
 
 .top-nav-item.active {
   background:
-    radial-gradient(circle at 20% 0%, rgba(255,255,255,0.22), transparent 45%),
-    linear-gradient(135deg, #2563eb, #0ea5e9);
+    radial-gradient(circle at 20% 0%, rgba(255,255,255,0.2), transparent 45%),
+    linear-gradient(135deg, #3b82f6, #22d3ee);
   color: #f9fafb;
   border-color: transparent;
   box-shadow: 0 14px 40px rgba(37, 99, 235, 0.25);
@@ -289,6 +295,7 @@ body.light .theme-knob {
   padding: 24px 40px 40px;
   max-width: 980px;
   min-height: 100vh;
+  margin: 0 auto;
 }
 
 /* ── SCREENS ── */
