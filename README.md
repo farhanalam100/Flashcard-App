@@ -11,6 +11,61 @@ A powerful, AI-powered flashcard study app built with vanilla HTML, CSS & JavaSc
 
 ## ✨ Features
 
+
+- **Deck library**
+  - Search decks by name
+  - Filter by category
+  - Filter by tag
+  - Deck cards show: card count, last score (if available), and due‑today count
+
+- **Create / edit decks**
+  - Set a **deck name**, **category**, **color**
+  - Add cards with **front / back / optional hint**
+  - Add **tags** (comma‑separated) like `exam, chapter 4, vocab`
+
+- **Bulk deck tagging (Select mode)**
+  - Select multiple decks from the library
+  - Add a tag to all selected decks
+  - Remove a tag from all selected decks
+  - Select all visible decks / clear selection
+
+- **AI card generation**
+  - Generate a set of cards from a topic (e.g., “Photosynthesis”)
+  - Adds generated cards into the current deck draft for review before saving
+
+- **Study modes**
+  - **Flashcard (flip)**
+  - **Multiple choice**
+  - **Type answer**
+  - Optional **shuffle**
+  - Optional **timer**
+
+- **Spaced repetition scheduling**
+  - Uses an SM‑2 style approach to schedule future reviews based on your ratings
+  - Shows **due‑today** counts and a “Review Now” shortcut when cards are due
+
+- **Analytics**
+  - Sessions, accuracy, streak
+  - Streak calendar heatmap
+  - Deck performance overview
+  - Weakest cards list
+  - Export stats as CSV
+
+- **Import / Export / Share**
+  - Export a deck as JSON
+  - Import a deck JSON file
+  - Copy a share link
+  - Show a QR code
+
+- **Theme**
+  - Dark / Light theme toggle
+
+## Project files
+
+- `index.html` — UI structure
+- `style.css` — styling
+- `script.js` — app logic
+- `assets/flashcards-logo.png` — logo
 ### 🤖 AI Card Generation
 - Type any topic and instantly generate 5–20 flashcards using AI
 - Cards come with questions, answers, and hints automatically
