@@ -3,116 +3,378 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Flashcard Study App</title>
+  <title>Memora — Flashcard Study App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <div class="app">
-    <div class="header">
-      <h1>🃏 Flashcard Study App</h1>
-      <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
-    </div>
 
-    <!-- Home Screen -->
-    <div id="home-screen">
-      <div class="stats-bar">
-        <div class="stat-box">📚 <span id="total-decks">0</span> Decks</div>
-        <div class="stat-box">🃏 <span id="total-cards">0</span> Cards</div>
-        <div class="stat-box">✅ <span id="total-learned">0</span> Learned</div>
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-icon">M</span>
+        <span class="logo-text">memora</span>
       </div>
-      <button class="primary-btn" onclick="showCreate()">➕ Create New Deck</button>
-      <div id="deck-list"></div>
-    </div>
-
-    <!-- Create Deck Screen -->
-    <div id="create-screen" class="hidden">
-      <h2>Create a Deck</h2>
-      <input type="text" id="deck-name" placeholder="Deck name (e.g. Biology)" />
-      <select id="deck-category">
-        <option value="">Select Category</option>
-        <option value="📚 Science">📚 Science</option>
-        <option value="📖 History">📖 History</option>
-        <option value="🔢 Math">🔢 Math</option>
-        <option value="🌍 Geography">🌍 Geography</option>
-        <option value="💻 Programming">💻 Programming</option>
-        <option value="🗣️ Language">🗣️ Language</option>
-        <option value="🎯 Other">🎯 Other</option>
-      </select>
-      <h3>Add Cards</h3>
-      <input type="text" id="card-front" placeholder="Question (front)" />
-      <input type="text" id="card-back" placeholder="Answer (back)" />
-      <input type="text" id="card-hint" placeholder="Hint (optional)" />
-      <button onclick="addCard()">➕ Add Card</button>
-      <div id="card-preview"></div>
-      <div class="btn-row">
-        <button class="primary-btn" onclick="saveDeck()">💾 Save Deck</button>
-        <button class="secondary-btn" onclick="showHome()">← Back</button>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-screen="home" onclick="navTo('home')">
+          <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+          Home
+        </button>
+        <button class="nav-item" data-screen="create" onclick="navTo('create')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          New Deck
+        </button>
+        <button class="nav-item" data-screen="analytics" onclick="navTo('analytics')">
+          <svg viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>
+          Analytics
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="nav-item" onclick="showHelp()">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 015.8 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>
+          Help
+        </button>
+        <button class="nav-item" onclick="toggleTheme()">
+          <svg id="theme-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          <span id="theme-label">Dark Mode</span>
+        </button>
       </div>
-    </div>
+    </aside>
 
-    <!-- Study Screen -->
-    <div id="study-screen" class="hidden">
-      <div class="study-header">
-        <h2 id="study-deck-name"></h2>
-        <div class="study-options">
-          <label><input type="checkbox" id="random-order" checked /> Random</label>
-          <label><input type="checkbox" id="show-timer" /> Timer</label>
+    <!-- ── MAIN ── -->
+    <main class="main-content">
+
+      <!-- ══ HOME SCREEN ══ -->
+      <div id="home-screen" class="screen active">
+        <div class="screen-header">
+          <div>
+            <h1>Your Library</h1>
+            <p class="sub">Review, study, and master your decks</p>
+          </div>
+          <button class="btn-primary" onclick="navTo('create')">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Deck
+          </button>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-value" id="total-decks">0</span>
+            <span class="stat-label">Decks</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="total-cards">0</span>
+            <span class="stat-label">Cards</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="total-learned">0</span>
+            <span class="stat-label">Mastered</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="streak-count">0</span>
+            <span class="stat-label">Day Streak 🔥</span>
+          </div>
+        </div>
+
+        <!-- Due Today Banner -->
+        <div id="due-today-banner" class="due-banner hidden">
+          <span class="due-icon">📅</span>
+          <div>
+            <strong id="due-count">0</strong> cards due for review today
+          </div>
+          <button class="btn-ghost" onclick="studyDueCards()">Review Now →</button>
+        </div>
+
+        <!-- Search -->
+        <div class="search-row">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="search-input" placeholder="Search decks…" oninput="filterDecks()" />
+          </div>
+          <select id="filter-category" onchange="filterDecks()">
+            <option value="">All categories</option>
+            <option value="📚 Science">📚 Science</option>
+            <option value="📖 History">📖 History</option>
+            <option value="🔢 Math">🔢 Math</option>
+            <option value="🌍 Geography">🌍 Geography</option>
+            <option value="💻 Programming">💻 Programming</option>
+            <option value="🗣️ Language">🗣️ Language</option>
+            <option value="🎯 Other">🎯 Other</option>
+          </select>
+        </div>
+
+        <div id="deck-list"></div>
+      </div>
+
+      <!-- ══ CREATE/EDIT SCREEN ══ -->
+      <div id="create-screen" class="screen">
+        <div class="screen-header">
+          <div>
+            <h1 id="create-title">Create Deck</h1>
+            <p class="sub">Build your study set</p>
+          </div>
+          <button class="btn-ghost" onclick="navTo('home')">← Back</button>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-col">
+            <label class="form-label">Deck Name</label>
+            <input type="text" id="deck-name" placeholder="e.g. Biology Ch. 4" />
+
+            <label class="form-label">Category</label>
+            <select id="deck-category">
+              <option value="">Select category</option>
+              <option value="📚 Science">📚 Science</option>
+              <option value="📖 History">📖 History</option>
+              <option value="🔢 Math">🔢 Math</option>
+              <option value="🌍 Geography">🌍 Geography</option>
+              <option value="💻 Programming">💻 Programming</option>
+              <option value="🗣️ Language">🗣️ Language</option>
+              <option value="🎯 Other">🎯 Other</option>
+            </select>
+
+            <label class="form-label">Deck Color</label>
+            <div class="color-picker" id="color-picker">
+              <div class="color-dot selected" data-color="#e94560" style="background:#e94560"></div>
+              <div class="color-dot" data-color="#a855f7" style="background:#a855f7"></div>
+              <div class="color-dot" data-color="#3b82f6" style="background:#3b82f6"></div>
+              <div class="color-dot" data-color="#10b981" style="background:#10b981"></div>
+              <div class="color-dot" data-color="#f59e0b" style="background:#f59e0b"></div>
+              <div class="color-dot" data-color="#ec4899" style="background:#ec4899"></div>
+            </div>
+          </div>
+
+          <div class="form-col">
+            <!-- AI Generate -->
+            <div class="ai-box">
+              <div class="ai-box-header">
+                <span class="ai-badge">✨ AI</span>
+                <span>Generate cards from a topic</span>
+              </div>
+              <input type="text" id="ai-topic" placeholder="e.g. Photosynthesis, World War II…" />
+              <div class="ai-controls">
+                <select id="ai-count">
+                  <option value="5">5 cards</option>
+                  <option value="10" selected>10 cards</option>
+                  <option value="15">15 cards</option>
+                  <option value="20">20 cards</option>
+                </select>
+                <button class="btn-primary" onclick="generateCards()" id="ai-btn">
+                  <svg viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+                  Generate
+                </button>
+              </div>
+              <div id="ai-status" class="ai-status hidden"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Card Form -->
+        <div class="card-form-box">
+          <h3 id="card-form-heading">Add Card</h3>
+          <input type="hidden" id="edit-card-index" value="-1" />
+          <div class="card-inputs">
+            <input type="text" id="card-front" placeholder="Question (front)" />
+            <input type="text" id="card-back" placeholder="Answer (back)" />
+            <input type="text" id="card-hint" placeholder="Hint (optional)" />
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary" onclick="addCard()" id="add-card-btn">➕ Add Card</button>
+            <button class="btn-ghost hidden" onclick="cancelEditCard()" id="cancel-edit-btn">Cancel</button>
+          </div>
+        </div>
+
+        <div id="card-preview"></div>
+
+        <div class="btn-row" style="margin-top:20px">
+          <button class="btn-primary big" onclick="saveDeck()">💾 Save Deck</button>
+          <button class="btn-ghost" onclick="navTo('home')">Cancel</button>
         </div>
       </div>
-      <div class="progress-bar">
-        <div id="progress-fill"></div>
-      </div>
-      <p id="progress-text"></p>
-      <div id="timer-display" class="hidden">⏱️ <span id="timer-count">0</span>s</div>
 
-      <div class="card-container" onclick="flipCard()">
-        <div class="card" id="flashcard">
-          <div class="card-front" id="card-front-text"></div>
-          <div class="card-back" id="card-back-text"></div>
+      <!-- ══ STUDY SCREEN ══ -->
+      <div id="study-screen" class="screen">
+        <div class="study-topbar">
+          <button class="btn-ghost" onclick="navTo('home')">← Exit</button>
+          <span id="study-deck-name" class="study-deck-label"></span>
+          <div class="study-opts">
+            <label class="toggle-label"><input type="checkbox" id="random-order" checked /> Shuffle</label>
+            <label class="toggle-label"><input type="checkbox" id="show-timer" /> Timer</label>
+          </div>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-bar"><div id="progress-fill"></div></div>
+          <span id="progress-text" class="progress-label"></span>
+        </div>
+
+        <div id="timer-display" class="timer hidden">⏱ <span id="timer-count">0</span>s</div>
+
+        <!-- Mode Tabs -->
+        <div class="mode-tabs" id="mode-tabs">
+          <button class="mode-tab active" onclick="setMode('flip')" data-mode="flip">🃏 Flashcard</button>
+          <button class="mode-tab" onclick="setMode('quiz')" data-mode="quiz">🔤 Multiple Choice</button>
+          <button class="mode-tab" onclick="setMode('type')" data-mode="type">⌨️ Type Answer</button>
+        </div>
+
+        <!-- Flashcard Mode -->
+        <div id="mode-flip">
+          <div class="card-scene" onclick="flipCard()" id="card-scene">
+            <div class="card" id="flashcard">
+              <div class="card-face card-front" id="card-front-text"></div>
+              <div class="card-face card-back" id="card-back-text"></div>
+            </div>
+          </div>
+          <p id="hint-text" class="hint-text"></p>
+          <p class="tip-text">Click card to flip · Space to flip · ← → to answer</p>
+          <div id="answer-buttons" class="answer-row hidden">
+            <button class="btn-wrong" onclick="answer(0)">✕ Missed</button>
+            <button class="btn-vague" onclick="answer(1)">～ Vague</button>
+            <button class="btn-know" onclick="answer(2)">✓ Got it</button>
+          </div>
+        </div>
+
+        <!-- Quiz Mode -->
+        <div id="mode-quiz" class="hidden">
+          <div class="quiz-question-card">
+            <p class="quiz-label">Question</p>
+            <p id="quiz-question" class="quiz-question-text"></p>
+          </div>
+          <div id="quiz-choices" class="quiz-choices"></div>
+        </div>
+
+        <!-- Type Answer Mode -->
+        <div id="mode-type" class="hidden">
+          <div class="quiz-question-card">
+            <p class="quiz-label">Question</p>
+            <p id="type-question" class="quiz-question-text"></p>
+          </div>
+          <div class="type-answer-wrap">
+            <input type="text" id="type-answer-input" placeholder="Type your answer…" />
+            <button class="btn-primary" onclick="checkTypeAnswer()">Check →</button>
+          </div>
+          <div id="type-feedback" class="type-feedback hidden"></div>
+        </div>
+
+        <button class="btn-ghost" style="margin-top:20px" onclick="navTo('home')">← Back to Library</button>
+      </div>
+
+      <!-- ══ RESULT SCREEN ══ -->
+      <div id="result-screen" class="screen">
+        <div id="confetti-container"></div>
+        <div class="result-wrap">
+          <div class="result-emoji" id="result-emoji">🎉</div>
+          <h1 id="result-headline">Session Complete!</h1>
+          <p id="result-text" class="result-score"></p>
+          <div class="result-stats" id="result-breakdown"></div>
+          <div class="btn-row" style="justify-content:center;margin-top:24px">
+            <button class="btn-primary big" onclick="restartDeck()">🔄 Try Again</button>
+            <button class="btn-ghost big" onclick="navTo('home')">🏠 Home</button>
+          </div>
         </div>
       </div>
-      <p id="hint-text" class="hint-text"></p>
-      <p class="hint">👆 Click card to flip • Space to flip • ← → to answer</p>
 
-      <div id="answer-buttons" class="hidden">
-        <button class="know" onclick="answer(true)">✅ Know it</button>
-        <button class="dontknow" onclick="answer(false)">❌ Don't know</button>
-      </div>
-      <button class="secondary-btn" onclick="showHome()">← Back to Home</button>
-    </div>
+      <!-- ══ ANALYTICS SCREEN ══ -->
+      <div id="analytics-screen" class="screen">
+        <div class="screen-header">
+          <div>
+            <h1>Analytics</h1>
+            <p class="sub">Your learning progress at a glance</p>
+          </div>
+        </div>
 
-    <!-- Result Screen -->
-    <div id="result-screen" class="hidden">
-      <h2>🎉 Session Complete!</h2>
-      <div class="result-card">
-        <p id="result-text"></p>
-        <div class="result-breakdown" id="result-breakdown"></div>
-      </div>
-      <div class="btn-row">
-        <button class="primary-btn" onclick="restartDeck()">🔄 Try Again</button>
-        <button class="secondary-btn" onclick="showHome()">🏠 Home</button>
-      </div>
-    </div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-value" id="a-sessions">0</span>
+            <span class="stat-label">Sessions</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="a-accuracy">0%</span>
+            <span class="stat-label">Avg Accuracy</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="a-streak">0</span>
+            <span class="stat-label">Day Streak</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="a-mastered">0</span>
+            <span class="stat-label">Mastered Cards</span>
+          </div>
+        </div>
 
-    <!-- Help Modal -->
-    <div id="help-modal" class="modal hidden">
-      <div class="modal-content">
-        <h2>How to Use</h2>
-        <p>1. Click <b>Create New Deck</b> to make a deck</p>
-        <p>2. Add cards with a question, answer and optional hint</p>
-        <p>3. Click <b>Study</b> on any deck to start</p>
-        <p>4. Click the card to flip it, then mark if you knew it</p>
-        <p>5. Keyboard: <b>Space</b> to flip, <b>←</b> Don't know, <b>→</b> Know it</p>
-        <button onclick="closeHelp()">Got it! ✅</button>
-      </div>
-    </div>
+        <h2 style="margin:28px 0 14px">Streak Calendar</h2>
+        <div id="heatmap" class="heatmap"></div>
 
-    <div class="footer">
-      <button class="help-btn" onclick="showHelp()">❓ Help</button>
+        <h2 style="margin:28px 0 14px">Deck Performance</h2>
+        <div id="deck-performance" class="deck-perf-list"></div>
+
+        <h2 style="margin:28px 0 14px">Weakest Cards</h2>
+        <div id="weak-cards" class="weak-card-list"></div>
+
+        <div class="btn-row" style="margin-top:24px">
+          <button class="btn-ghost" onclick="exportStats()">⬇ Export Stats CSV</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── HELP MODAL ── -->
+  <div id="help-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" onclick="closeHelp()">✕</button>
+      <h2>How to use Memora</h2>
+      <div class="help-list">
+        <div class="help-item"><span class="help-num">1</span> Create a deck manually or use <strong>AI Generate</strong> to build cards instantly</div>
+        <div class="help-item"><span class="help-num">2</span> Choose a study mode: Flashcard, Multiple Choice, or Type Answer</div>
+        <div class="help-item"><span class="help-num">3</span> Rate cards as <em>Missed / Vague / Got it</em> — the app schedules smarter reviews</div>
+        <div class="help-item"><span class="help-num">4</span> Check Analytics to see your weakest cards and streak</div>
+        <div class="help-item"><span class="help-num">5</span> Keyboard: <kbd>Space</kbd> flip · <kbd>←</kbd> Missed · <kbd>→</kbd> Got it</div>
+      </div>
+      <button class="btn-primary" onclick="closeHelp()">Got it ✓</button>
     </div>
   </div>
 
+  <!-- ── IMPORT/EXPORT MODAL ── -->
+  <div id="io-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" onclick="closeIOModal()">✕</button>
+      <h2>Import / Export Deck</h2>
+      <div class="btn-row" style="flex-direction:column;gap:10px;margin-top:12px">
+        <button class="btn-primary" onclick="exportDeck()">⬇ Export as JSON</button>
+        <label class="btn-ghost" style="cursor:pointer;text-align:center">
+          ⬆ Import JSON
+          <input type="file" accept=".json" id="import-file" onchange="importDeck(event)" style="display:none">
+        </label>
+        <button class="btn-ghost" onclick="shareDeck()">🔗 Copy Share Link</button>
+        <button class="btn-ghost" onclick="showQR()">📱 Show QR Code</button>
+      </div>
+      <div id="qr-container" class="hidden" style="text-align:center;margin-top:16px"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+hvk jvihvih igi 
+Ohoi oi
+oyogkuvhbojoihoit sioywo8g8 
+nibi oboi 
