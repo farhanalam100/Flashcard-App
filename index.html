@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlashCaed — Flashcard Study App</title>
+  <title>FlashCards — Flashcard Study App</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
     href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
@@ -19,9 +19,13 @@
     <!-- ── SIDEBAR ── -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-logo">
-        <span class="logo-icon">F</span>
-        <span class="logo-text">FlashCaed</span>
+        <img src="assets/flashcards-logo.png" alt="FlashCards Logo" class="logo-image" />
+        <div class="logo-copy">
+          <span class="logo-text">FlashCards</span>
+          <span class="logo-subtext">Smart Study Workspace</span>
+        </div>
       </div>
+      <span class="sidebar-section-title">Main</span>
       <nav class="sidebar-nav">
         <button class="nav-item active" data-screen="home" onclick="navTo('home')">
           <svg viewBox="0 0 24 24">
@@ -47,6 +51,7 @@
           Analytics
         </button>
       </nav>
+      <span class="sidebar-section-title">Preferences</span>
       <div class="sidebar-footer">
         <button class="nav-item" onclick="showHelp()">
           <svg viewBox="0 0 24 24">
@@ -357,7 +362,7 @@
   <div id="help-modal" class="modal-overlay hidden">
     <div class="modal">
       <button class="modal-close" onclick="closeHelp()">✕</button>
-      <h2>How to use FlashCaed</h2>
+      <h2>How to use FlashCards</h2>
       <div class="help-list">
         <div class="help-item"><span class="help-num">1</span> Create a deck manually or use <strong>AI
             Generate</strong> to build cards instantly</div>
