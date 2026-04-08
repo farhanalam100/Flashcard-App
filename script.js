@@ -38,7 +38,8 @@ function saveAll() {
 ══════════════════════════════════════ */
 function navTo(screen) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => {
+  // Works for both the old sidebar buttons (`.nav-item`) and the current header (`.top-nav-item`)
+  document.querySelectorAll('.nav-item, .top-nav-item').forEach(n => {
     n.classList.toggle('active', n.dataset.screen === screen);
   });
   clearTimer();

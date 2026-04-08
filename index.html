@@ -27,22 +27,44 @@
       </div>
       <nav class="top-nav">
         <button class="top-nav-item active" data-screen="home" onclick="navTo('home')">
-          Home
+          <svg class="top-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M9 21V12h6v9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          </svg>
+          <span>Home</span>
         </button>
         <button class="top-nav-item" data-screen="create" onclick="navTo('create')">
-          New Deck
+          <svg class="top-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 8v8M8 12h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span>New Deck</span>
         </button>
         <button class="top-nav-item" data-screen="analytics" onclick="navTo('analytics')">
-          Analytics
+          <svg class="top-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="12" width="4" height="9" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <rect x="10" y="7" width="4" height="14" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <rect x="17" y="3" width="4" height="18" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+          <span>Analytics</span>
         </button>
       </nav>
       <div class="topbar-actions">
         <button class="icon-button" onclick="showHelp()" aria-label="Help">
-          ?
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M12 2a10 10 0 1 0 0 20a10 10 0 0 0 0-20Z" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M9.8 9a2.3 2.3 0 0 1 4.4.9c0 1.8-2.2 2-2.2 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="12" cy="17.3" r="0.9" fill="currentColor"/>
+          </svg>
         </button>
-        <button class="icon-button theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-          <span class="theme-toggle-icon">🌙</span>
-          <span id="theme-label" class="theme-toggle-label">Dark</span>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+          <span class="theme-switch" aria-hidden="true">
+            <span class="theme-knob"></span>
+          </span>
+          <svg id="theme-icon" class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+          </svg>
+          <span id="theme-label" class="theme-toggle-label">Dark Mode</span>
         </button>
       </div>
     </header>
