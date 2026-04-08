@@ -114,7 +114,6 @@ The app uses the **SM-2 algorithm** — the same method behind Anki:
 
 ## 📸 Screenshots
 
-> *(Add your screenshots here)*
 
 ---
 
@@ -122,8 +121,7 @@ The app uses the **SM-2 algorithm** — the same method behind Anki:
 
 - Built as part of **[Hack Club Jackpot](https://jackpot.hackclub.com)** — a program for teen hackers
 - Spaced repetition based on the **SM-2 algorithm** by Piotr Woźniak
-- AI generation powered by **Anthropic Claude API**
-- QR codes by **qrcodejs**
+  
 
 ---
 
