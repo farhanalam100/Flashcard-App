@@ -745,7 +745,7 @@ function exportStats() {
   csv += `\nTotal Sessions,${stats.sessions || 0}\n`;
   csv += `Mastered Cards,${stats.learned || 0}\n`;
   csv += `Accuracy,${stats.totalAnswered ? Math.round((stats.totalCorrect / stats.totalAnswered) * 100) : 0}%\n`;
-  downloadText(csv, 'memora-stats.csv', 'text/csv');
+  downloadText(csv, 'flashcaed-stats.csv', 'text/csv');
   showToast('Stats exported ✓');
 }
 
