@@ -21,7 +21,7 @@ let timerInterval = null;
 let timerSeconds = 0;
 let isLight = false;
 let currentMode = 'flip';
-let selectedColor = '#e94560';
+let selectedColor = '#2563eb';
 let currentIODeckIndex = -1;
 let dueCardDeckIndex = -1;
 
@@ -36,6 +36,29 @@ function saveAll() {
   localStorage.setItem('stats', JSON.stringify(stats));
   localStorage.setItem('activityLog', JSON.stringify(activityLog));
   localStorage.setItem('cardHistory', JSON.stringify(cardHistory));
+}
+
+function normalizeDeck(deck) {
+  const safeDeck = { ...deck };
+  safeDeck.id = safeDeck.id || `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  safeDeck.name = String(safeDeck.name || '').trim();
+  safeDeck.category = safeDeck.category || '';
+  safeDeck.tags = Array.isArray(safeDeck.tags)
+    ? Array.from(new Set(safeDeck.tags.map(t => String(t || '').trim()).filter(Boolean))).slice(0, 12)
+    : [];
+  safeDeck.color = safeDeck.color || '#2563eb';
+  safeDeck.created = safeDeck.created || Date.now();
+  safeDeck.sessionHistory = Array.isArray(safeDeck.sessionHistory) ? safeDeck.sessionHistory : [];
+  safeDeck.cards = Array.isArray(safeDeck.cards) ? safeDeck.cards.map(card => ({
+    front: String(card.front || '').trim(),
+    back: String(card.back || '').trim(),
+    hint: String(card.hint || '').trim(),
+    ease: typeof card.ease === 'number' ? card.ease : 2.5,
+    interval: typeof card.interval === 'number' ? card.interval : 0,
+    repetitions: typeof card.repetitions === 'number' ? card.repetitions : 0,
+    nextReview: card.nextReview || null
+  })).filter(c => c.front && c.back) : [];
+  return safeDeck;
 }
 
 /* ══════════════════════════════════════
@@ -84,7 +107,6 @@ function updateStats() {
 
 function getStreak() {
   let streak = 0;
-  const today = todayKey();
   let d = new Date();
   while (true) {
     const key = d.toISOString().slice(0, 10);
@@ -141,6 +163,7 @@ function studyDueCards() {
 function toggleTheme() {
   isLight = !isLight;
   document.body.classList.toggle('light', isLight);
+  localStorage.setItem('flashcards_theme', isLight ? 'light' : 'dark');
   document.getElementById('theme-label').textContent = isLight ? 'Light Mode' : 'Dark Mode';
   const icon = document.getElementById('theme-icon');
   icon.innerHTML = isLight
@@ -165,7 +188,7 @@ document.getElementById('color-picker').addEventListener('click', e => {
 function resetCreateForm() {
   editingDeckIndex = -1;
   tempCards = [];
-  selectedColor = '#e94560';
+  selectedColor = '#2563eb';
   document.getElementById('create-title').textContent = 'Create Deck';
   document.getElementById('deck-name').value = '';
   document.getElementById('deck-category').value = '';
@@ -261,9 +284,11 @@ function saveDeck() {
     ? Array.from(new Set(tagsRaw.split(',').map(t => t.trim()).filter(Boolean))).slice(0, 12)
     : [];
 
-  const deckObj = { name, category, tags, color: selectedColor, cards: tempCards, created: Date.now() };
+  const deckObj = { name, category, tags, color: selectedColor, cards: tempCards.map(c => ({ ...c })), created: Date.now() };
 
   if (editingDeckIndex >= 0) {
+    deckObj.id = decks[editingDeckIndex].id;
+    deckObj.created = decks[editingDeckIndex].created || deckObj.created;
     deckObj.lastScore = decks[editingDeckIndex].lastScore;
     deckObj.sessionHistory = decks[editingDeckIndex].sessionHistory || [];
     decks[editingDeckIndex] = deckObj;
@@ -342,7 +367,7 @@ Keep answers concise (under 15 words). Questions should be specific and testable
       const data = await response.json();
       let text = (data.content || []).map(b => b.text || '').join('');
       text = text.replace(/```json|```/g, '').trim();
-      cards = JSON.parse(text);
+      cards = parseCardsJSON(text);
       if (!Array.isArray(cards)) throw new Error('Invalid response format');
     } else {
       cards = buildSmartCards(topic, count);
@@ -451,6 +476,20 @@ function buildSmartCards(topic, count) {
     cards.push({ front: t.front, back: t.back, hint: t.hint });
   }
   return cards;
+}
+
+function parseCardsJSON(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    // Some models return extra text around JSON. Extract the first array block.
+    const start = text.indexOf('[');
+    const end = text.lastIndexOf(']');
+    if (start >= 0 && end > start) {
+      return JSON.parse(text.slice(start, end + 1));
+    }
+    throw new Error('Could not parse generated cards JSON');
+  }
 }
 
 /* ══════════════════════════════════════
@@ -645,7 +684,20 @@ function refreshTagFilterOptions() {
 
 function deleteDeck(i) {
   if (!confirm(`Delete "${decks[i].name}"?`)) return;
+  const deletedDeck = decks[i];
   decks.splice(i, 1);
+  // Rebuild selection indices after array shift.
+  selectedDeckIndices = new Set(
+    Array.from(selectedDeckIndices)
+      .filter(idx => idx !== i)
+      .map(idx => (idx > i ? idx - 1 : idx))
+  );
+  // Remove card history entries for deleted deck id.
+  if (deletedDeck?.id) {
+    Object.keys(cardHistory).forEach(k => {
+      if (k.startsWith(`${deletedDeck.id}-`)) delete cardHistory[k];
+    });
+  }
   saveAll();
   renderDecks();
   updateStats();
@@ -739,14 +791,14 @@ function answer(quality) {
   if (quality >= 1) sessionCorrect++;
   if (quality === 2) stats.learned++;
 
-  // SM-2 spaced repetition
+  // SM-2 spaced repetition + analytics tracking
   const card = currentCards[currentIndex];
   const origIdx = card._origIdx;
   if (origIdx !== undefined) {
     applySpacedRepetition(decks[currentDeckIndex].cards[origIdx], quality);
+    trackCardHistory(currentDeckIndex, origIdx, card.front, quality >= 1);
   }
 
-  trackCardHistory(currentDeckIndex, currentIndex, quality >= 1);
   logActivity();
   advance();
 }
@@ -774,12 +826,14 @@ function applySpacedRepetition(card, quality) {
   card.nextReview = next.toISOString();
 }
 
-function trackCardHistory(deckIdx, cardIdx, correct) {
-  const key = `${deckIdx}-${cardIdx}`;
-  if (!cardHistory[key]) cardHistory[key] = { correct: 0, total: 0, front: currentCards[cardIdx]?.front || '' };
+function trackCardHistory(deckIdx, origIdx, front, correct) {
+  const deck = decks[deckIdx];
+  if (!deck || origIdx === undefined) return;
+  const key = `${deck.id}-${origIdx}`;
+  if (!cardHistory[key]) cardHistory[key] = { correct: 0, total: 0, front: front || '' };
   cardHistory[key].total++;
   if (correct) cardHistory[key].correct++;
-  cardHistory[key].front = currentCards[cardIdx]?.front || '';
+  cardHistory[key].front = front || cardHistory[key].front || '';
 }
 
 function advance() {
@@ -810,7 +864,11 @@ function quizAnswer(btn, chosen, correct) {
   }
   sessionTotal++;
   if (isCorrect) { sessionCorrect++; stats.learned++; }
-  trackCardHistory(currentDeckIndex, currentIndex, isCorrect);
+  const card = currentCards[currentIndex];
+  if (card && card._origIdx !== undefined) {
+    applySpacedRepetition(decks[currentDeckIndex].cards[card._origIdx], isCorrect ? 2 : 0);
+    trackCardHistory(currentDeckIndex, card._origIdx, card.front, isCorrect);
+  }
   logActivity();
   setTimeout(() => advance(), 900);
 }
@@ -830,7 +888,11 @@ function checkTypeAnswer() {
 
   sessionTotal++;
   if (isCorrect) { sessionCorrect++; stats.learned++; }
-  trackCardHistory(currentDeckIndex, currentIndex, isCorrect);
+  const card = currentCards[currentIndex];
+  if (card && card._origIdx !== undefined) {
+    applySpacedRepetition(decks[currentDeckIndex].cards[card._origIdx], isCorrect ? 2 : 0);
+    trackCardHistory(currentDeckIndex, card._origIdx, card.front, isCorrect);
+  }
   logActivity();
   setTimeout(() => advance(), 1200);
 }
@@ -1025,9 +1087,9 @@ function importDeck(event) {
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
-      const deck = JSON.parse(e.target.result);
-      if (!deck.name || !Array.isArray(deck.cards)) throw new Error('Invalid');
-      deck.created = Date.now();
+      const rawDeck = JSON.parse(e.target.result);
+      const deck = normalizeDeck(rawDeck);
+      if (!deck.name || !Array.isArray(deck.cards) || !deck.cards.length) throw new Error('Invalid');
       decks.push(deck);
       saveAll();
       renderDecks();
@@ -1064,9 +1126,9 @@ function checkImportFromURL() {
   const raw = params.get('deck');
   if (!raw) return;
   try {
-    const deck = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(raw)))));
-    if (deck.name && deck.cards) {
-      deck.created = Date.now();
+    const rawDeck = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(raw)))));
+    const deck = normalizeDeck(rawDeck);
+    if (deck.name && deck.cards && deck.cards.length) {
       decks.push(deck);
       saveAll();
       showToast(`Imported "${deck.name}" 🎉`);
@@ -1128,6 +1190,13 @@ document.addEventListener('keydown', e => {
   }
 });
 
+// Global escape handling for modals
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  closeHelp();
+  closeIOModal();
+});
+
 /* ══════════════════════════════════════
    UTILITIES
 ══════════════════════════════════════ */
@@ -1140,4 +1209,14 @@ function escHtml(str) {
    INIT
 ══════════════════════════════════════ */
 checkImportFromURL();
+// One-time normalization/migration for existing localStorage decks.
+decks = decks.map(normalizeDeck).filter(d => d.name && d.cards.length);
+saveAll();
+// Restore saved theme preference.
+isLight = localStorage.getItem('flashcards_theme') === 'light';
+document.body.classList.toggle('light', isLight);
+document.getElementById('theme-label').textContent = isLight ? 'Light Mode' : 'Dark Mode';
+document.getElementById('theme-icon').innerHTML = isLight
+  ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+  : '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
 navTo('home');
