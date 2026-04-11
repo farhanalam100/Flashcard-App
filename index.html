@@ -14,9 +14,7 @@
   <link rel="shortcut icon" type="image/x-icon" href="assets/favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180x180.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -57,6 +55,19 @@
             </svg>
             <span>Analytics</span>
           </button>
+          <button class="top-nav-item" data-screen="pomodoro" onclick="navTo('pomodoro')">
+            <svg class="top-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M12 7v5l3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span>Pomodoro</span>
+          </button>
+          <button class="top-nav-item" data-screen="achievements" onclick="navTo('achievements')">
+            <svg class="top-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+            <span>Awards</span>
+          </button>
         </nav>
         <div class="topbar-actions">
           <button class="icon-button" onclick="showHelp()" aria-label="Help">
@@ -92,10 +103,7 @@
           <div class="btn-row">
             <button class="btn-ghost" id="manage-btn" onclick="toggleManageMode()">Select</button>
             <button class="btn-primary" onclick="navTo('create')">
-              <svg viewBox="0 0 24 24">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
               New Deck
             </button>
           </div>
@@ -120,22 +128,15 @@
           </div>
         </div>
 
-        <!-- Due Today Banner -->
         <div id="due-today-banner" class="due-banner hidden">
           <span class="due-icon">📅</span>
-          <div>
-            <strong id="due-count">0</strong> cards due for review today
-          </div>
+          <div><strong id="due-count">0</strong> cards due for review today</div>
           <button class="btn-ghost" onclick="studyDueCards()">Review Now →</button>
         </div>
 
-        <!-- Search -->
         <div class="search-row">
           <div class="search-box">
-            <svg viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
             <input type="text" id="search-input" placeholder="Search decks…" oninput="filterDecks()" aria-label="Search decks" />
           </div>
           <select id="filter-category" onchange="filterDecks()" aria-label="Filter by category">
@@ -153,7 +154,6 @@
           </select>
         </div>
 
-        <!-- Bulk actions (appears in Select mode) -->
         <div id="bulk-bar" class="bulk-bar hidden">
           <div class="bulk-left">
             <span class="bulk-count" id="bulk-count">0 selected</span>
@@ -177,14 +177,16 @@
             <h1 id="create-title">Create Deck</h1>
             <p class="sub">Build your study set</p>
           </div>
-          <button class="btn-ghost" onclick="navTo('home')">← Back</button>
+          <div class="btn-row">
+            <button class="btn-ghost" onclick="openCSVModal()">📊 Import CSV</button>
+            <button class="btn-ghost" onclick="navTo('home')">← Back</button>
+          </div>
         </div>
 
         <div class="form-grid">
           <div class="form-col">
             <label class="form-label">Deck Name</label>
             <input type="text" id="deck-name" placeholder="e.g. Biology Ch. 4" />
-
             <label class="form-label">Category</label>
             <select id="deck-category">
               <option value="">Select category</option>
@@ -196,10 +198,8 @@
               <option value="🗣️ Language">🗣️ Language</option>
               <option value="🎯 Other">🎯 Other</option>
             </select>
-
             <label class="form-label">Tags</label>
             <input type="text" id="deck-tags" placeholder="e.g. exam, chapter 4, vocab" />
-
             <label class="form-label">Deck Color</label>
             <div class="color-picker" id="color-picker">
               <div class="color-dot selected" data-color="#2563eb" style="background:#2563eb"></div>
@@ -210,9 +210,7 @@
               <div class="color-dot" data-color="#8b5cf6" style="background:#8b5cf6"></div>
             </div>
           </div>
-
           <div class="form-col">
-            <!-- AI Generate -->
             <div class="ai-box">
               <div class="ai-box-header">
                 <span class="ai-badge">✨ AI</span>
@@ -227,9 +225,7 @@
                   <option value="20">20 cards</option>
                 </select>
                 <button class="btn-primary" onclick="generateCards()" id="ai-btn">
-                  <svg viewBox="0 0 24 24" style="width:14px;height:14px">
-                    <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
-                  </svg>
+                  <svg viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" /></svg>
                   Generate
                 </button>
               </div>
@@ -238,7 +234,6 @@
           </div>
         </div>
 
-        <!-- Add Card Form -->
         <div class="card-form-box">
           <h3 id="card-form-heading">Add Card</h3>
           <input type="hidden" id="edit-card-index" value="-1" />
@@ -271,24 +266,17 @@
             <label class="toggle-label"><input type="checkbox" id="show-timer" /> Timer</label>
           </div>
         </div>
-
         <div class="progress-wrap">
-          <div class="progress-bar">
-            <div id="progress-fill"></div>
-          </div>
+          <div class="progress-bar"><div id="progress-fill"></div></div>
           <span id="progress-text" class="progress-label"></span>
         </div>
-
         <div id="timer-display" class="timer hidden">⏱ <span id="timer-count">0</span>s</div>
-
-        <!-- Mode Tabs -->
         <div class="mode-tabs" id="mode-tabs">
           <button class="mode-tab active" onclick="setMode('flip')" data-mode="flip">🃏 Flashcard</button>
           <button class="mode-tab" onclick="setMode('quiz')" data-mode="quiz">🔤 Multiple Choice</button>
           <button class="mode-tab" onclick="setMode('type')" data-mode="type">⌨️ Type Answer</button>
         </div>
 
-        <!-- Flashcard Mode -->
         <div id="mode-flip">
           <div class="card-scene" onclick="flipCard()" id="card-scene">
             <div class="card" id="flashcard">
@@ -305,7 +293,6 @@
           </div>
         </div>
 
-        <!-- Quiz Mode -->
         <div id="mode-quiz" class="hidden">
           <div class="quiz-question-card">
             <p class="quiz-label">Question</p>
@@ -314,7 +301,6 @@
           <div id="quiz-choices" class="quiz-choices"></div>
         </div>
 
-        <!-- Type Answer Mode -->
         <div id="mode-type" class="hidden">
           <div class="quiz-question-card">
             <p class="quiz-label">Question</p>
@@ -353,41 +339,84 @@
             <p class="sub">Your learning progress at a glance</p>
           </div>
         </div>
-
         <div class="stats-row">
-          <div class="stat-card">
-            <span class="stat-value" id="a-sessions">0</span>
-            <span class="stat-label">Sessions</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value" id="a-accuracy">0%</span>
-            <span class="stat-label">Avg Accuracy</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value" id="a-streak">0</span>
-            <span class="stat-label">Day Streak</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value" id="a-mastered">0</span>
-            <span class="stat-label">Mastered Cards</span>
-          </div>
+          <div class="stat-card"><span class="stat-value" id="a-sessions">0</span><span class="stat-label">Sessions</span></div>
+          <div class="stat-card"><span class="stat-value" id="a-accuracy">0%</span><span class="stat-label">Avg Accuracy</span></div>
+          <div class="stat-card"><span class="stat-value" id="a-streak">0</span><span class="stat-label">Day Streak</span></div>
+          <div class="stat-card"><span class="stat-value" id="a-mastered">0</span><span class="stat-label">Mastered Cards</span></div>
         </div>
-
         <h2 style="margin:28px 0 14px">Streak Calendar</h2>
         <div id="heatmap" class="heatmap"></div>
-
         <h2 style="margin:28px 0 14px">Deck Performance</h2>
         <div id="deck-performance" class="deck-perf-list"></div>
-
         <h2 style="margin:28px 0 14px">Weakest Cards</h2>
         <div id="weak-cards" class="weak-card-list"></div>
-
         <div class="btn-row" style="margin-top:24px">
           <button class="btn-ghost" onclick="exportStats()">⬇ Export Stats CSV</button>
         </div>
       </div>
 
+      <!-- ══ POMODORO SCREEN ══ -->
+      <div id="pomodoro-screen" class="screen">
+        <div class="screen-header">
+          <div>
+            <h1>🍅 Pomodoro Timer</h1>
+            <p class="sub">Stay focused with timed study sessions</p>
+          </div>
+          <button class="btn-ghost" onclick="navTo('home')">← Back</button>
+        </div>
+        <div class="pomodoro-wrap">
+          <div class="pomodoro-mode-tabs">
+            <button class="pomo-tab active" onclick="setPomoMode('focus')" id="tab-focus">🎯 Focus 25m</button>
+            <button class="pomo-tab" onclick="setPomoMode('short')" id="tab-short">☕ Short Break 5m</button>
+            <button class="pomo-tab" onclick="setPomoMode('long')" id="tab-long">🌿 Long Break 15m</button>
+          </div>
+          <div class="pomodoro-circle-wrap">
+            <svg class="pomo-ring" viewBox="0 0 220 220">
+              <circle class="pomo-ring-bg" cx="110" cy="110" r="96"/>
+              <circle class="pomo-ring-fill" id="pomo-ring-fill" cx="110" cy="110" r="96" stroke-dasharray="603" stroke-dashoffset="0"/>
+            </svg>
+            <div class="pomodoro-display">
+              <div class="pomo-time" id="pomo-time">25:00</div>
+              <div class="pomo-label" id="pomo-label">Focus Time</div>
+              <div class="pomo-session" id="pomo-session">Session 1 of 4</div>
+            </div>
+          </div>
+          <div class="pomo-controls">
+            <button class="btn-ghost" onclick="resetPomo()">↺ Reset</button>
+            <button class="btn-primary big" id="pomo-btn" onclick="togglePomo()">▶ Start</button>
+            <button class="btn-ghost" onclick="skipPomo()">⏭ Skip</button>
+          </div>
+          <div class="pomo-stats-row">
+            <div class="pomo-stat"><span id="pomo-completed">0</span><small>Completed</small></div>
+            <div class="pomo-stat"><span id="pomo-total-time">0m</span><small>Total Focus</small></div>
+            <div class="pomo-stat"><span id="pomo-goal">4</span><small>Daily Goal</small></div>
+          </div>
+          <div class="pomo-settings">
+            <label class="form-label">Daily Goal (sessions)</label>
+            <input type="range" id="pomo-goal-slider" min="1" max="12" value="4" oninput="updatePomoGoal(this.value)" style="width:100%;margin-bottom:8px"/>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-3)"><span>1</span><span>12</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ACHIEVEMENTS SCREEN ══ -->
+      <div id="achievements-screen" class="screen">
+        <div class="screen-header">
+          <div>
+            <h1>🏆 Achievements</h1>
+            <p class="sub">Your milestones and badges</p>
+          </div>
+          <button class="btn-ghost" onclick="navTo('home')">← Back</button>
+        </div>
+        <div id="achievements-list" class="achievements-grid"></div>
+      </div>
+
     </main>
+
+    <!-- Sound Toggle -->
+    <button class="sound-toggle" onclick="toggleSound()" id="sound-btn" title="Toggle sounds">🔊</button>
+
   </div>
 
   <!-- ── HELP MODAL ── -->
@@ -396,16 +425,13 @@
       <button class="modal-close" onclick="closeHelp()">✕</button>
       <h2>How to use FlashCards</h2>
       <div class="help-list">
-        <div class="help-item"><span class="help-num">1</span> Create a deck manually or use <strong>AI
-            Generate</strong> to build cards instantly</div>
-        <div class="help-item"><span class="help-num">2</span> Choose a study mode: Flashcard, Multiple Choice, or Type
-          Answer</div>
-        <div class="help-item"><span class="help-num">3</span> Rate cards as <em>Missed / Vague / Got it</em> — the app
-          schedules smarter reviews</div>
-        <div class="help-item"><span class="help-num">4</span> Check Analytics to see your weakest cards and streak
-        </div>
-        <div class="help-item"><span class="help-num">5</span> Keyboard: <kbd>Space</kbd> flip · <kbd>←</kbd> Missed ·
-          <kbd>→</kbd> Got it</div>
+        <div class="help-item"><span class="help-num">1</span> Create a deck manually or use <strong>AI Generate</strong> to build cards instantly</div>
+        <div class="help-item"><span class="help-num">2</span> Import cards from a CSV file using the <strong>📊 Import CSV</strong> button</div>
+        <div class="help-item"><span class="help-num">3</span> Choose a study mode: Flashcard, Multiple Choice, or Type Answer</div>
+        <div class="help-item"><span class="help-num">4</span> Rate cards as <em>Missed / Vague / Got it</em> — the app schedules smarter reviews</div>
+        <div class="help-item"><span class="help-num">5</span> Use the 🍅 <strong>Pomodoro</strong> timer to stay focused during sessions</div>
+        <div class="help-item"><span class="help-num">6</span> Check 🏆 <strong>Awards</strong> to track your achievements and milestones</div>
+        <div class="help-item"><span class="help-num">7</span> Keyboard: <kbd>Space</kbd> flip · <kbd>←</kbd> Missed · <kbd>→</kbd> Got it</div>
       </div>
       <button class="btn-primary" onclick="closeHelp()">Got it ✓</button>
     </div>
@@ -429,17 +455,46 @@
     </div>
   </div>
 
+  <!-- ── CSV IMPORT MODAL ── -->
+  <div id="csv-modal" class="modal-overlay hidden">
+    <div class="modal" style="max-width:560px">
+      <button class="modal-close" onclick="closeCSVModal()">✕</button>
+      <h2>📊 Import from CSV</h2>
+      <p style="font-size:13px;color:var(--text-3);margin-bottom:16px">
+        Paste CSV with format: <code style="background:var(--surface2);padding:2px 6px;border-radius:4px">question,answer,hint</code> (one card per line)
+      </p>
+      <textarea id="csv-input" rows="8" placeholder="What is photosynthesis?,Process plants use to make food from sunlight,Think: photo = light&#10;Capital of France?,Paris,Western Europe" style="width:100%;font-family:monospace;font-size:13px;resize:vertical;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px"></textarea>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn-primary" onclick="importFromCSV()">📥 Import Cards</button>
+        <label class="btn-ghost" style="cursor:pointer">
+          📂 Upload .csv
+          <input type="file" accept=".csv" id="csv-file-input" onchange="importCSVFile(event)" style="display:none"/>
+        </label>
+        <button class="btn-ghost" onclick="closeCSVModal()">Cancel</button>
+      </div>
+      <div id="csv-status" class="ai-status hidden"></div>
+    </div>
+  </div>
+
+  <!-- ── ACHIEVEMENT TOAST ── -->
+  <div id="achievement-toast" class="achievement-toast hidden">
+    <div class="achievement-toast-inner">
+      <span id="achievement-toast-icon">🏆</span>
+      <div>
+        <div class="achievement-toast-title">Achievement Unlocked!</div>
+        <div id="achievement-toast-name"></div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="script.js?v=2"></script>
+  <script src="script.js?v=3"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {
-          // Ignore SW registration failures silently for local/file edge cases
-        });
+        navigator.serviceWorker.register('sw.js').catch(() => {});
       });
     }
   </script>
 </body>
-
 </html>
