@@ -1267,7 +1267,7 @@ body.manage-mode .deck-actions {
   width: 90%;
   position: relative;
   animation: fadeUp 0.25s ease;
-  box-shadow: 0 24px 60px rgba(2, 6, 23, 0.34);
+  box-shadow: 0 24px 60px rgba(2, 17, 84, 0.34);
 }
 
 .modal h2 {
