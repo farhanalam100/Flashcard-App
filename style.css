@@ -532,4 +532,7 @@ input[type="range"] { accent-color: var(--accent); cursor: pointer; }
   .answer-row button { max-width: 100%; }
   .pomo-stats-row { gap: 8px; }
   .pomo-stat { padding: 10px 14px; min-width: 70px; }
-}
+} 
+ 
+
+
