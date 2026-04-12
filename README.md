@@ -1,104 +1,105 @@
-# FlashCards — Premium Flashcard Study App
+# 🃏 FlashCards — Smart Study Workspace
 
-FlashCards is a sleek, single‑page flashcard app designed for focused studying. Create decks manually or generate them with AI, study using multiple modes, and track your progress with analytics.
+> Built because I was stressed about exams and tired of wasting paper on flashcards that I'd lose anyway.
 
-## How to run
+![HTML](https://img.shields.io/badge/HTML-5-orange) ![CSS](https://img.shields.io/badge/CSS-3-blue) ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow) ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 
-- Open `index.html` in your browser.
-- Your decks are saved automatically in **LocalStorage** (they stay on this device/browser).
+## 🌐 Live Demo
+**[Try it here → farhanalam100.github.io/Flashcard-App](https://farhanalam100.github.io/Flashcard-App/)**
 
-## Core features
+---
 
-- **Deck library**
-  - Search decks by name
-  - Filter by category
-  - Filter by tag
-  - Deck cards show: card count, last score (if available), and due‑today count
+## Why I built this
 
-- **Create / edit decks**
-  - Set a **deck name**, **category**, **color**
-  - Add cards with **front / back / optional hint**
-  - Add **tags** (comma‑separated) like `exam, chapter 4, vocab`
+I was sitting at my desk the night before an exam, and I saw a flashcard taped to my study table. It hit me — why am I still doing this on paper? I lose them, I can't search them, and making them takes forever. I wanted something I could actually use every day, not just a project I'd forget about after submitting.
 
-- **Bulk deck tagging (Select mode)**
-  - Select multiple decks from the library
-  - Add a tag to all selected decks
-  - Remove a tag from all selected decks
-  - Select all visible decks / clear selection
+So I built FlashCards. It started as a basic flip-card app and slowly turned into something I genuinely use now. I added spaced repetition because I read about how Anki works and wanted to understand it. I added AI generation because typing out 30 cards manually is painful. I added the Pomodoro timer because I kept getting distracted while studying with my own app which is a bit embarrassing honestly.
 
-- **AI card generation**
-  - Generate a set of cards from a topic (e.g., “Photosynthesis”)
-  - Adds generated cards into the current deck draft for review before saving
+---
 
-- **Study modes**
-  - **Flashcard (flip)**
-  - **Multiple choice**
-  - **Type answer**
-  - Optional **shuffle**
-  - Optional **timer**
+## Features
 
-- **Spaced repetition scheduling**
-  - Uses an SM‑2 style approach to schedule future reviews based on your ratings
-  - Shows **due‑today** counts and a “Review Now” shortcut when cards are due
+###  AI Card Generation
+Type any topic and get 10 flashcards generated instantly. Uses the Anthropic API. Falls back to a smart template generator if no API key is set so it works for everyone.
 
-- **Analytics**
-  - Sessions, accuracy, streak
-  - Streak calendar heatmap
-  - Deck performance overview
-  - Weakest cards list
-  - Export stats as CSV
+###  Spaced Repetition (SM-2)
+The same algorithm Anki uses. Cards you struggle with come back sooner. Cards you know well get pushed further. I implemented this from scratch after reading about the SM-2 formula — negative intervals were my first bug.
 
-- **Import / Export / Share**
-  - Export a deck as JSON
-  - Import a deck JSON file
-  - Copy a share link
-  - Show a QR code
-  - Backup and restore all app data (decks, stats, history, theme)
+###  3 Study Modes
+- **Flashcard** — classic flip with 3D animation
+- **Multiple Choice** — auto-generates wrong answers from your other cards
+- **Type Answer** — fuzzy matching so small typos don't count against you
 
-- **Theme**
-  - Dark / Light theme toggle
+###  Pomodoro Timer
+25-minute focus sessions with a circular ring animation. Auto-switches to break mode. Sends a desktop notification when done.
 
-- **PWA app mode**
-  - Installable as an app (supported browsers)
-  - Offline support with service worker cache
+### 🏆 18 Achievements
+Unlock badges for streaks, perfect scores, studying after midnight, finishing a deck in under 60 seconds, and more. Each one has an animated toast notification.
 
-## Tech notes
+###  Analytics Dashboard
+- 90-day activity heatmap
+- Deck performance bar charts  
+- Weakest cards tracker
+- Export stats as CSV
 
-- **Frontend only**: HTML + CSS + JavaScript
-- **Storage**: LocalStorage (no database)
-- **AI**: uses an external API call from the browser (requires network access)
+###  12 Themes
+6 dark and 6 light themes. Midnight Navy, Pure Black, Forest Night, Deep Purple, Ember, Cosmos, Warm Paper, Arctic White, Sage Garden, Lavender, Sunrise, Ocean Mist. Click in the navbar to switch.
 
-## Data & safety
+### Other stuff
+- CSV import — paste from Excel or Google Sheets directly
+- QR code sharing — share any deck with a link or QR code
+- PWA — installable on your phone like a real app
+- Works offline
+- Sound effects using Web Audio API (no files, just oscillators)
+- Dark/light mode that actually works properly
+- Bulk deck tagging
+- Keyboard shortcuts
 
-- **Backup all data**
-  - Go to **Analytics** and click `🗂 Backup All Data`
-  - This exports a JSON backup with decks, stats, activity log, card history, and theme
+---
 
-- **Restore backup**
-  - Go to **Analytics** and click `⬆ Restore Backup`
-  - Choose a backup JSON file exported from this app
+## 🚀 How to use it
 
-- **Run diagnostics**
-  - Go to **Analytics** and click `🧪 Run Diagnostics`
-  - Checks for common data issues (broken deck structures, malformed history keys)
+### Just open the link
+**[farhanalam100.github.io/Flashcard-App](https://farhanalam100.github.io/Flashcard-App/)**
 
-- **Reset app data**
-  - Go to **Analytics** and click `🧹 Reset App Data`
-  - This removes all local data from the browser for this app
-  - Use backup first if you need to keep data
+No login, no signup. Everything saves locally in your browser.
 
-- **Where data is stored**
-  - All app data is stored in browser LocalStorage
-  - Data does not sync to cloud by default
+### Run locally
+```bash
+git clone https://github.com/farhanalam100/Flashcard-App.git
+cd Flashcard-App
+# just open index.html in your browser
+```
 
-- **PWA update notes**
-  - If you deploy a new version and still see old behavior, hard refresh once
-  - On desktop: `Ctrl + F5` (Windows) or `Cmd + Shift + R` (macOS)
+No installs. No build step. No npm. Just open and go.
 
-## Project files
+---
 
-- `index.html` — UI structure
-- `style.css` — styling
-- `script.js` — app logic
-- `assets/flashcards-logo.png` — logo
+##  Keyboard Shortcuts
 
+| Key | Action |
+|-----|--------|
+| `Space` | Flip card |
+| `→` | Got it ✓ |
+| `←` | Missed ✕ |
+| `↓` | Vague ～ |
+| `Enter` | Submit answer (type mode) |
+| `Escape` | Close any modal |
+
+---
+
+##  Built With
+
+Just vanilla HTML, CSS and JavaScript. No frameworks, no build tools, no dependencies except QRCode.js from a CDN and Google Fonts.
+
+ Thing: What it does 
+ Vanilla JS | Everything — state, routing, storage, animations |
+ CSS Variables | The entire theme system |
+ localStorage | Saves all your decks and progress |
+ SM-2 Algorithm | Spaced repetition scheduling |
+ Web Audio API | Sound effects without any audio files |
+ Anthropic API | AI card generation | Service Worker | Offline support and PWA |
+
+---
+
+## 📁 Project Structure
