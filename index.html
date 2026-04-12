@@ -348,11 +348,12 @@
       <h2>How to use FlashCards</h2>
       <div class="help-list">
         <div class="help-item"><span class="help-num">1</span> Create a deck manually or use <strong>AI Generate</strong> to build cards instantly</div>
-        <div class="help-item"><span class="help-num">2</span> Import cards from CSV using the <strong>📊 Import CSV</strong> button</div>
+        <div class="help-item"><span class="help-num">2</span> Import cards from CSV using the <strong> Import CSV</strong> button</div>
         <div class="help-item"><span class="help-num">3</span> Choose a study mode: Flashcard, Multiple Choice, or Type Answer</div>
         <div class="help-item"><span class="help-num">4</span> Rate cards as <em>Missed / Vague / Got it</em> for smarter reviews</div>
-        <div class="help-item"><span class="help-num">5</span> Use 🍅 <strong>Pomodoro</strong> to stay focused, check 🏆 <strong>Awards</strong> for achievements</div>
+        <div class="help-item"><span class="help-num">5</span> Use <strong>Pomodoro</strong> to stay focused, check <strong>Awards</strong> for achievements</div>
         <div class="help-item"><span class="help-num">6</span> Click 🎨 to change your theme anytime</div>
+        
         <div class="help-item"><span class="help-num">7</span> Keyboard: <kbd>Space</kbd> flip · <kbd>←</kbd> Missed · <kbd>→</kbd> Got it</div>
       </div>
       <button class="btn-primary" onclick="closeHelp()">Got it ✓</button>
@@ -378,7 +379,7 @@
   <div id="csv-modal" class="modal-overlay hidden">
     <div class="modal" style="max-width:560px">
       <button class="modal-close" onclick="closeCSVModal()">✕</button>
-      <h2>📊 Import from CSV</h2>
+      <h2>Import from CSV</h2>
       <p style="font-size:13px;color:var(--text-3);margin-bottom:16px">Format: <code style="background:var(--surface2);padding:2px 6px;border-radius:4px">question,answer,hint</code> — one card per line</p>
       <textarea id="csv-input" rows="8" placeholder="What is photosynthesis?,Process plants use to make food,Think photo = light" style="width:100%;font-family:monospace;font-size:13px;resize:vertical;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px"></textarea>
       <div class="btn-row" style="margin-top:12px">

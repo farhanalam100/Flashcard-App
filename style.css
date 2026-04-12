@@ -554,7 +554,7 @@ input[type="range"]{accent-color:var(--accent);cursor:pointer}
 .ach-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;transition:transform 0.2s,border-color 0.2s}
 .ach-card.earned{border-color:rgba(245,158,11,0.4);background:linear-gradient(135deg,rgba(245,158,11,0.06),transparent)}
 .ach-card.locked{opacity:0.5}
-.ach-card:hover{transform:translateY(-2px)}
+.ach-card:hover{transform:translate(-2px)}
 .ach-icon{font-size:28px;flex-shrink:0;width:44px;text-align:center}
 .ach-info{flex:1;min-width:0}
 .ach-name{font-weight:600;font-size:14px;color:var(--text)}
@@ -577,7 +577,7 @@ input[type="range"]{accent-color:var(--accent);cursor:pointer}
 /* ── RESPONSIVE ── */
 @media(max-width:768px){
   .topbar{padding:10px 0}
-  .topbar-inner{padding:0 14px;flex-wrap:wrap;justify-content:center;gap:10px}
+  .topbar-inner{padding:0 15px;flex-wrap:wrap;justify-content:center;gap:10px}
   .topbar-left{width:100%;justify-content:center}
   .top-nav{order:3;width:100%;justify-content:center;overflow-x:auto;scrollbar-width:none}
   .top-nav::-webkit-scrollbar{display:none}
