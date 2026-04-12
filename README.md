@@ -96,3 +96,6 @@ Unlock badges for streaks, perfect scores, studying after midnight, finishing a 
 - `script.js` — app logic
 - `assets/flashcards-logo.png` — logo
 
+- ##Declaration##
+- I hereby declare that i used the help of AI like claude and nanobanana but i understood each step and practiced it on my own atleast once b
+
