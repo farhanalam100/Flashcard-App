@@ -1,52 +1,46 @@
-# FlashCards — Premium Flashcard Study App
+# 🃏 FlashCards — Smart Study Workspace
 
-FlashCards is a sleek, single‑page flashcard app designed for focused studying. Create decks manually or generate them with AI, study using multiple modes, and track your progress with analytics.
+> Built because I was stressed about exams and tired of wasting paper on flashcards that I'd lose anyway.
 
-## How to run
+![HTML](https://img.shields.io/badge/HTML-5-orange) ![CSS](https://img.shields.io/badge/CSS-3-blue) ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow) ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 
-- Open `index.html` in your browser.
-- Your decks are saved automatically in **LocalStorage** (they stay on this device/browser).
+## 🌐 Live Demo
+**[Try it here → farhanalam100.github.io/Flashcard-App](https://farhanalam100.github.io/Flashcard-App/)**
 
-## Core features
+---
 
-- **Deck library**
-  - Search decks by name
-  - Filter by category
-  - Filter by tag
-  - Deck cards show: card count, last score (if available), and due‑today count
+## Why I built this
 
-- **Create / edit decks**
-  - Set a **deck name**, **category**, **color**
-  - Add cards with **front / back / optional hint**
-  - Add **tags** (comma‑separated) like `exam, chapter 4, vocab`
+I was sitting at my desk the night before an exam, and I saw a flashcard taped to my study table. It hit me — why am I still doing this on paper? I lose them, I can't search them, and making them takes forever. I wanted something I could actually use every day, not just a project I'd forget about after submitting.
 
-- **Bulk deck tagging (Select mode)**
-  - Select multiple decks from the library
-  - Add a tag to all selected decks
-  - Remove a tag from all selected decks
-  - Select all visible decks / clear selection
+So I built FlashCards. It started as a basic flip-card app and slowly turned into something I genuinely use now. I added spaced repetition because I read about how Anki works and wanted to understand it. I added AI generation because typing out 30 cards manually is painful. I added the Pomodoro timer because I kept getting distracted while studying with my own app which is a bit embarrassing honestly.
 
-- **AI card generation**
-  - Generate a set of cards from a topic (e.g., “Photosynthesis”)
-  - Adds generated cards into the current deck draft for review before saving
+---
 
-- **Study modes**
-  - **Flashcard (flip)**
-  - **Multiple choice**
-  - **Type answer**
-  - Optional **shuffle**
-  - Optional **timer**
+## Features
 
-- **Spaced repetition scheduling**
-  - Uses an SM‑2 style approach to schedule future reviews based on your ratings
-  - Shows **due‑today** counts and a “Review Now” shortcut when cards are due
+###  AI Card Generation
+Type any topic and get 10 flashcards generated instantly. Uses the Anthropic API. Falls back to a smart template generator if no API key is set so it works for everyone.
 
-- **Analytics**
-  - Sessions, accuracy, streak
-  - Streak calendar heatmap
-  - Deck performance overview
-  - Weakest cards list
-  - Export stats as CSV
+###  Spaced Repetition (SM-2)
+The same algorithm Anki uses. Cards you struggle with come back sooner. Cards you know well get pushed further. I implemented this from scratch after reading about the SM-2 formula — negative intervals were my first bug.
+
+###  3 Study Modes
+- **Flashcard** — classic flip with 3D animation
+- **Multiple Choice** — auto-generates wrong answers from your other cards
+- **Type Answer** — fuzzy matching so small typos don't count against you
+
+###  Pomodoro Timer
+25-minute focus sessions with a circular ring animation. Auto-switches to break mode. Sends a desktop notification when done.
+
+### 🏆 18 Achievements
+Unlock badges for streaks, perfect scores, studying after midnight, finishing a deck in under 60 seconds, and more. Each one has an animated toast notification.
+
+###  Analytics Dashboard
+- 90-day activity heatmap
+- Deck performance bar charts  
+- Weakest cards tracker
+- Export stats as CSV
 
 - **Import / Export / Share**
   - Export a deck as JSON
@@ -91,7 +85,7 @@ FlashCards is a sleek, single‑page flashcard app designed for focused studying
   - All app data is stored in browser LocalStorage
   - Data does not sync to cloud by default
 
-- *PWA update notes*
+- **PWA update notes**
   - If you deploy a new version and still see old behavior, hard refresh once
   - On desktop: `Ctrl + F5` (Windows) or `Cmd + Shift + R` (macOS)
 
