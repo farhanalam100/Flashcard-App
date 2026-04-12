@@ -757,3 +757,4 @@ saveAll();
 applyTheme(currentTheme);
 checkAchievements();
 navTo('home');
+ 

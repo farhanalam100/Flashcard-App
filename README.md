@@ -91,7 +91,7 @@ FlashCards is a sleek, single‑page flashcard app designed for focused studying
   - All app data is stored in browser LocalStorage
   - Data does not sync to cloud by default
 
-- **PWA update notes**
+- *PWA update notes*
   - If you deploy a new version and still see old behavior, hard refresh once
   - On desktop: `Ctrl + F5` (Windows) or `Cmd + Shift + R` (macOS)
 
