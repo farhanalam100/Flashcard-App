@@ -1,12 +1,6 @@
-/* ══════════════════════════════════════════
-   FLASHCARDS — Complete App Logic
-   Features: AI generation, Spaced Repetition (SM-2),
-   Multiple study modes, Analytics, Confetti, QR,
-   Import/Export, Pomodoro, Achievements, Sounds,
-   CSV Import, Theme Picker
-══════════════════════════════════════════ */
+// Flashcard App
 
-/* ── STATE ── */
+// Global variables
 let decks = JSON.parse(localStorage.getItem('decks')) || [];
 let stats = JSON.parse(localStorage.getItem('stats')) || { learned: 0, sessions: 0, totalCorrect: 0, totalAnswered: 0 };
 let activityLog = JSON.parse(localStorage.getItem('activityLog')) || {};
@@ -29,7 +23,7 @@ let manageMode = false;
 let selectedDeckIndices = new Set();
 let lastRenderedDeckIndices = [];
 
-/* ── PERSIST ── */
+// Storage functions
 function saveAll() {
   localStorage.setItem('decks', JSON.stringify(decks));
   localStorage.setItem('stats', JSON.stringify(stats));
